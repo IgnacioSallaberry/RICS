@@ -106,7 +106,7 @@ class Acf_Fit():
         if fit_func =='binding':
             fa, fb = params
             fitting = lambda t, K, l: ( 1 + K*(fa - fb/K)**2 *np.exp(-l*t))
-            #Digman: Paxillin Dynamics Measured during Adhesion Assembly and Disassembly by Correlation Spectroscopy
+            #Ecuacion del paper Digman-Gratton: Paxillin Dynamics Measured during Adhesion Assembly and Disassembly by Correlation Spectroscopy
             return fitting
 
 
@@ -115,6 +115,8 @@ class Acf_Fit():
         if fit_func =='Circular/LineScan':
             w0, dr, tp, tl = params
             fitting = lambda D: np.exp(-0.5*((2*x*dr/w0)**2)/(1 + 4*D*self.f*(tp*x+tl*y)/(w0**2)))
+            # x = shift in x direction
+            # y = shift in y direction
             # w0 = PSF's radio
             # dr = pixel size
             # tp = pixel time
@@ -126,11 +128,15 @@ class Acf_Fit():
             fitting = lambda D: np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*self.f*(tp*x+tl*y)/(w0**2)))
 
 
-        #RASTER Scanning term (x and y direction) for isotropic difussion            
+        #Spacial Correlation Function for isotropic difussion            
         if fit_func =='Spacial-Correlation':
             w0, dr, tp, tl, gamma = params
             fitting = lambda G0, D: gamma*G0*( 1 + 4*D*self.f*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*self.f*(tp*x+tl*y) / wz**2 )**(-1/2)
             # gamma = gamma factor = 0.35 for 3D gaussian or 0.076 for Gaussian Lorentzian
+
+        #------------------------------------------------------------------------------------------------------------------
+
+
 
 
     def perform_fit(self, params, initial, fit_func='diffusive', custom_func=None, limit=0):
