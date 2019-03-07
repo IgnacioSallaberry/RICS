@@ -68,33 +68,70 @@ class Acf_Fit():
             self.f = 2
         elif self.microscope == 'confocal' or self.microscope == '1-photon':
             self.f = 1
+        
+        #----------------------------------------------------- Func de Corr  TEMPORALES:---------------------------------
         #one species diffusing model
         if fit_func =='diffusive':
             w0, wz = params
-            fitting = lambda x, D, G0: G0 * ( 1 + 4*D*self.f*x / w0**2 )**(-1) * ( 1 + 4*D*self.f*x / wz**2 )**(-1/2)
+            fitting = lambda t, D, G0: G0 * ( 1 + 4*D*self.f*t / w0**2 )**(-1) * ( 1 + 4*D*self.f*t / wz**2 )**(-1/2)
+            # D = coef of difusion
+            # Go = G(tau=o)
+            # t = tau = tiempo
             return fitting
+        
         #two species diffusing model
         if fit_func =='2-diffusive': 
             w0, wz, f1 = params
-            fitting = lambda x, D1, D2, G01, G02: f1* f1 * G01 * (1 + 4 * D1 * self.f * x / w0 ** 2) ** (-1) * (1 + 4 * D1 * self.f * x / wz ** 2) ** (-1 / 2) + \
-                                       (1 - f1) * (1 - f1) * G02 * (1 + 4 * D2 * self.f * x / w0 ** 2) ** (-1) * (1 + 4 * D2 * self.f * x / wz ** 2) ** (-1 / 2)
+            fitting = lambda t, D1, D2, G01, G02: f1* f1 * G01 * (1 + 4 * D1 * self.f * t / w0 ** 2) ** (-1) * (1 + 4 * D1 * self.f * t / wz ** 2) ** (-1 / 2) + \
+                                       (1 - f1) * (1 - f1) * G02 * (1 + 4 * D2 * self.f * t / w0 ** 2) ** (-1) * (1 + 4 * D2 * self.f * t / wz ** 2) ** (-1 / 2)
+            # w0 = valor en r de la PSF
+            # wz = valor en z de la PSF
+            # D = coef of difusion
+            # Go = G(tau=o)
+            # t = tau = tiempo
             return fitting
+        
         #one species of diffusing and binding model
         if fit_func =='diffusive-binding':
             w0, wz, fa, fb = params
-            fitting = lambda x, K, l, G0, D:  G0 * ( 1 + 4*D*self.f*x / w0**2 )**(-1) * ( 1 + 4*D*self.f*x / wz**2 )**(-1/2) * ( 1 + K*(fa - fb/K)**2 *np.exp(-l*x))
+            fitting = lambda t, K, l, G0, D:  G0 * ( 1 + 4*D*self.f*t / w0**2 )**(-1) * ( 1 + 4*D*self.f*t / wz**2 )**(-1/2) * ( 1 + K*(fa - fb/K)**2 *np.exp(-l*t))
             # Go = G(tau=o)
             # K=Kf/Kb
             # l = landa = Kf+Kb = Ka+Kb
-            # x = tau = tiempo
+            # t = tau = tiempo
             # fa= fluorescent fraction of particle in state a
             return  fitting
         
         #one species binding model
         if fit_func =='binding':
-            fitting = lambda x, K, l: ( 1 + K*(fa - fb/K)**2 *np.exp(-l*x))
+            fa, fb = params
+            fitting = lambda t, K, l: ( 1 + K*(fa - fb/K)**2 *np.exp(-l*t))
             #Digman: Paxillin Dynamics Measured during Adhesion Assembly and Disassembly by Correlation Spectroscopy
             return fitting
+
+
+        #----------------------------------------------------- Func de Corr  ESPACIALES:---------------------------------
+        #Circular or Line Scanning term for isotropic difussion
+        if fit_func =='Circular/LineScan':
+            w0, dr, tp, tl = params
+            fitting = lambda D: np.exp(-0.5*((2*x*dr/w0)**2)/(1 + 4*D*self.f*(tp*x+tl*y)/(w0**2)))
+            # w0 = PSF's radio
+            # dr = pixel size
+            # tp = pixel time
+            # tl = line time
+            
+        #RASTER Scanning term (x and y direction) for isotropic difussion            
+        if fit_func =='RASTER-Scan-term':
+            w0, dr, tp, tl = params
+            fitting = lambda D: np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*self.f*(tp*x+tl*y)/(w0**2)))
+
+
+        #RASTER Scanning term (x and y direction) for isotropic difussion            
+        if fit_func =='Spacial-Correlation':
+            w0, dr, tp, tl, gamma = params
+            fitting = lambda G0, D: gamma*G0*( 1 + 4*D*self.f*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*self.f*(tp*x+tl*y) / wz**2 )**(-1/2)
+            # gamma = gamma factor = 0.35 for 3D gaussian or 0.076 for Gaussian Lorentzian
+
 
     def perform_fit(self, params, initial, fit_func='diffusive', custom_func=None, limit=0):
         '''
@@ -188,4 +225,4 @@ class Acf_Fit():
             print('AIC= ', self.calculate_aic(self.fit2_func, self.popt2), '  |  BIC= ',
                   self.calculate_bic(self.fit2_func, self.popt2))
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
