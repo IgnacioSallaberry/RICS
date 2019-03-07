@@ -34,23 +34,24 @@ class Acf_Fit():
         self.fit1 = self.fit2 = False
 
     def extract_acf(self, data, size=128):
-        data_pixel = data[(size*size/2) + size/2 - 1:(size*size/2) + size-1]
-        data_line = [data[size*i + size/2 - 1] for i in range(size)]
-        return data_line, data_pixel
-
+        data_pixel = data[(size*size/2) + size/2 - 1:(size*size/2) + size-1]   #toma un pedazo de los datos crudos
+        data_line = [data[size*i + size/2 - 1] for i in range(size)]           #crea una lista seleccionando los valores de datos crudos desde data [63](aca i=0) hasta data[16319](aca i=128) suponiendo size = 128 
+        return data_line, data_pixel                                           #data_line = [data[63],data[64],...,data[16319]]
+   
+    # grafico de datos crudos
     def raw_graph(self):
         '''
         Plots graph of data (raw) before analysis or any fitting function
         '''
         self.raw = plt.subplot()
         self.raw.plot(self.tau, self.gtau, 'b-')
-        self.raw.set_xscale("log")
+        self.raw.set_xscale("log")   #setea scala logartimica en x
         self.raw.grid(True)
         self.raw.set(xlabel='tau', ylabel='G(tau)', title='Datos experimentales ACF')
         plt.show()
 
     def set_origin(self, lower_bound):
-        points = [self.gtau[i] if self.tau[i] > lower_bound else 0 for i in range(len(self.tau))]
+        points = [self.gtau[i] if self.tau[i] > lower_bound else 0 for i in range(len(self.tau))]   #esto es lo mismo que escribir un if... else... en vertical???
         points = np.ma.masked_equal(points,0)
         avg = np.average(points)
         self.gtau = [i-avg for i in self.gtau]
@@ -67,22 +68,33 @@ class Acf_Fit():
             self.f = 2
         elif self.microscope == 'confocal' or self.microscope == '1-photon':
             self.f = 1
+        #one species diffusing model
         if fit_func =='diffusive':
             w0, wz = params
             fitting = lambda x, D, G0: G0 * ( 1 + 4*D*self.f*x / w0**2 )**(-1) * ( 1 + 4*D*self.f*x / wz**2 )**(-1/2)
             return fitting
-        if fit_func =='2-diffusive':
+        #two species diffusing model
+        if fit_func =='2-diffusive': 
             w0, wz, f1 = params
             fitting = lambda x, D1, D2, G01, G02: f1* f1 * G01 * (1 + 4 * D1 * self.f * x / w0 ** 2) ** (-1) * (1 + 4 * D1 * self.f * x / wz ** 2) ** (-1 / 2) + \
                                        (1 - f1) * (1 - f1) * G02 * (1 + 4 * D2 * self.f * x / w0 ** 2) ** (-1) * (1 + 4 * D2 * self.f * x / wz ** 2) ** (-1 / 2)
             return fitting
-        if fit_func =='binding':
+        #one species of diffusing and binding model
+        if fit_func =='diffusive-binding':
             w0, wz, fa, fb = params
             fitting = lambda x, K, l, G0, D:  G0 * ( 1 + 4*D*self.f*x / w0**2 )**(-1) * ( 1 + 4*D*self.f*x / wz**2 )**(-1/2) * ( 1 + K*(fa - fb/K)**2 *np.exp(-l*x))
+            # Go = G(tau=o)
+            # K=Kf/Kb
+            # l = landa = Kf+Kb = Ka+Kb
+            # x = tau = tiempo
+            # fa= fluorescent fraction of particle in state a
             return  fitting
-        if fit_func =='diffusive-binding':
+        
+        #one species binding model
+        if fit_func =='binding':
+            fitting = lambda x, K, l: ( 1 + K*(fa - fb/K)**2 *np.exp(-l*x))
             #Digman: Paxillin Dynamics Measured during Adhesion Assembly and Disassembly by Correlation Spectroscopy
-            return None
+            return fitting
 
     def perform_fit(self, params, initial, fit_func='diffusive', custom_func=None, limit=0):
         '''
