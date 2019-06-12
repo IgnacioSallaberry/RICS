@@ -43,10 +43,22 @@ t_diff = w0**2/(4*D)
 print('tiempo de difusion = {} segundos'.format(t_diff))
 
 #T=[0.01,0.1,1,10,100]
-T=[0.01,1,30]
+#T=[0.01,1,30]
+T=[30]
 #T=[1]
 
 #t_binding=t_diff/T
+
+
+mu, sigma = 1, 1 # mean and standard deviation
+#Ruido = np.random.randn(len(tau),1)
+j=0
+ruido = []
+while j<len(tau):
+#    ruido.append(0.5*np.random.uniform(0,2)-1)
+    ruido.append((j+1)**(-0.3)*1.5*((np.random.uniform(0,2)-1)))
+    j+=1   
+
 
 
 #==============================================================================
@@ -120,8 +132,14 @@ for t in T:
     Gtotal_normalizada = Gtotal/max(Gtotal)
     Gtotal_moño2 = G_diff * G_bind + G_diff + G_bind +1
 
-  
-    
+
+#==============================================================================
+#                                Ruido para las señales
+#==============================================================================    
+    Gtotal_ruido = Gtotal  + ruido
+    Gtotal_ruido_normalizada = Gtotal_ruido/max(Gtotal_ruido)
+#    
+   
 #    ###  Grafico solo termino difussivo
 #    plt.figure(i)
 ##    plt.plot((dr*x), G_norm,'-.',label=f'D={d}',linewidth=1)
@@ -172,11 +190,9 @@ for t in T:
 #        plt.savefig('C:\\Users\\LEC\\Desktop')
 #    i+=1
 #    
-    
-    ###  Grafico funcion de correlación  total
+    ###  Grafico funcion de correlación  total  CON RUIDO
     plt.figure(i)
-#    plt.plot((dr*x), Gtotal_normalizada,'-.',label=f'D={d}',linewidth=1)
-    plt.semilogx(tau, Gtotal_normalizada,'-',label=f'T={t} \n tb={t_binding}, td={t_diff}')
+    plt.semilogx(tau, Gtotal_ruido_normalizada,'-',label=f'T={t} \n tb={t_binding}, td={t_diff}')
     plt.legend()
     plt.xlabel(r'$\tau$ - ($s$)',fontsize=14)
     plt.ylabel(r'Gtot($\tau$)',fontsize=14)
@@ -188,6 +204,23 @@ for t in T:
     if guardar_imagenes:
         plt.savefig('C:\\Users\\LEC\\Desktop')
     i+=1
+    
+    
+    ###  Grafico funcion de correlación  total
+#    plt.figure(i)
+##    plt.plot((dr*x), Gtotal_normalizada,'-.',label=f'D={d}',linewidth=1)
+#    plt.semilogx(tau, Gtotal_normalizada,'-',label=f'T={t} \n tb={t_binding}, td={t_diff}')
+#    plt.legend()
+#    plt.xlabel(r'$\tau$ - ($s$)',fontsize=14)
+#    plt.ylabel(r'Gtot($\tau$)',fontsize=14)
+#    plt.title('G$(\tau) \_total$ \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
+##    plt.title('H-line  G total')
+#    plt.show()
+#    plt.tight_layout() #hace que no me corte los márgenes
+#    
+#    if guardar_imagenes:
+#        plt.savefig('C:\\Users\\LEC\\Desktop')
+#    i+=1
 
     ###  Grafico funcion de correlación  total
 #    plt.figure(i)
@@ -253,30 +286,60 @@ for t in T:
 #    t+=1
 
 
-    j=0
-    while tau[j]<t_diff:
-        j+=1
-    plt.semilogx(tau[j],Gtotal_normalizada[j], 'm*')#, label=r'$\t_dif$ = {}$s$'.format(round(tau[j],5)))      ###---> para graficar punto donde cae a la mitad la curva de correlación
-    j=0
-    while tau[j]<t_binding:
-        j+=1
-    plt.semilogx(tau[j],Gtotal_normalizada[j], 'c*')#, label=r'$\t_bind$ = {}$s$'.format(round(tau[j],5)))#, label=f'{round(tau[j],5)}$s$')      ###---> para graficar punto donde cae a la mitad la curva de correlación
+#    j=0
+#    while tau[j]<t_diff:
+#        j+=1
+#    plt.semilogx(tau[j],Gtotal_normalizada[j], 'm*')#, label=r'$\t_dif$ = {}$s$'.format(round(tau[j],5)))      ###---> para graficar punto donde cae a la mitad la curva de correlación
+#    j=0
+#    while tau[j]<t_binding:
+#        j+=1
+#    plt.semilogx(tau[j],Gtotal_normalizada[j], 'c*')#, label=r'$\t_bind$ = {}$s$'.format(round(tau[j],5)))#, label=f'{round(tau[j],5)}$s$')      ###---> para graficar punto donde cae a la mitad la curva de correlación
     ##    plt.semilogx(dr*x[j],0, 'g*', label=f'dist para Gtotal/2 = {round(dr*x[j],5)}$\mu m$')      ###---> para graficar punto en x donde cae a la mitad la curva de correlación
 #    plt.text(tau[j], Gtotal_normalizada[j], r'$\tau$ = {} $s$'.format(round(tau[j],3)), bbox=dict(facecolor='none', edgecolor='black', boxstyle='round,pad=1'))
 #    plt.arrow(tau[j], Gtotal_normalizada[j], 0, -Gtotal_normalizada[j])
     t+=1
 
+#
+#plt.semilogx(tau, G_diff_moño - 1,'k')    #Grafico la correlacion de DIFUSION 
+###busco el valor de tau para el t_diff
+#j=0
+#while tau[j]<t_diff:
+#    j+=1
+#plt.semilogx(tau[j],G_diff_moño[j]-1, 'ko')   #marco el t_diff
+#plt.axvline(x=t_diff)  #linea que marca el valor del t_diff
+#plt.show()
 
-plt.semilogx(tau, G_diff_moño - 1,'k')    #Grafico la correlacion de DIFUSION 
-##busco el valor de tau para el t_diff
-j=0
-while tau[j]<t_diff:
-    j+=1
-plt.semilogx(tau[j],G_diff_moño[j]-1, 'ko')   #marco el t_diff
 
-plt.axvline(x=t_diff)  #linea que marca el valor del t_diff
+#j=0
+#ruido = []
+#while j<len(tau):
+#    ruido.append(0.5*(-1)**(j)) 
+#    j+=1
+##Gtotal_ruido =[]
+##j=0
+##while j< len(tau):
+##    Gtotal_ruido.append( Gtotal_normalizada  + ruido[j])
+##    j+=1
+##                        
+##
+##
+#plt.figure(i)
+##    plt.plot((dr*x), Gtotal_normalizada,'-.',label=f'D={d}',linewidth=1)
+#plt.semilogx(tau, Gtotal_normalizada  + ruido,'-',label=f'T={t} \n tb={t_binding}, td={t_diff}')
+#plt.legend()
+#plt.xlabel(r'$\tau$ - ($s$)',fontsize=14)
+#plt.ylabel(r'Gtot($\tau$)',fontsize=14)
+#plt.title('G$(\tau) \_total$ \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
+##    plt.title('H-line  G total')
+#plt.show()
+#plt.tight_layout() #hace que no me corte los márgenes
 
-plt.show()
+
+
+
+
+
+
 
 
 
