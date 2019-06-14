@@ -31,6 +31,8 @@ plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
+plt.close('all') # antes de graficar, cierro todos las figuras que estén abiertas
+
 #==============================================================================
 #                 Datos originales:  Filtro el txt
 #==============================================================================    
@@ -70,7 +72,6 @@ while i< len(Funcion_de_correlacion):
 ##==============================================================================        
 plt.figure()
 ACF = np.asarray(G)  #para graficar debo pasar de list a un array
-plt.figure()
 plt.imshow(ACF.reshape(63,63))  
 plt.show()
 #### nota: que hace Reshape? lista.reshape()   toma la lista y, sin cambiar los valores, lo va cortando hasta acomodarlo en una matriz de nxm. Ojo que nxm debe ser = al len(lista)
@@ -101,7 +102,7 @@ while j<len(G):
 
 #gragico la linea Horizontal
 plt.figure()
-plt.plot(G)
+plt.plot(G, 'b*', label='ACF')
 plt.show()
 
 ##==============================================================================
@@ -130,7 +131,7 @@ def Scanning (x,y,dr,w0,tp,tl):
     return np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
 
 
-def Difusion (x,y,D,N):
+def Difusion (x,D,N):
     box_size = 256
     roi = 128
     tp = 5e-6             #seg    
@@ -141,9 +142,11 @@ def Difusion (x,y,D,N):
     a = w0/wz
     
     gamma = 0.3536        #gamma factor de la 3DG
-    N = 200 
+   
     
-    return (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
+    y=0
+    
+    return (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)   * np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
 
 
 
@@ -153,22 +156,34 @@ def Difusion (x,y,D,N):
 
 
 
-def Triplete (x,y,tp,tl,At,t_triplet):
-    
-    return 1+ At * np.exp(-(tp*x+tl*y)/t_triplet)
-    
+#def Triplete (x,y,tp,tl,At,t_triplet):
+#    
+#    return 1+ At * np.exp(-(tp*x+tl*y)/t_triplet)
+#    
+#
+#def Binding(x,y,tp,tl,Ab,t_binding):
+#    
+#    return Ab * np.exp(-(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)
 
-def Binding(x,y,tp,tl,Ab,t_binding):
-    
-    return Ab * np.exp(-(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)
 
-
-x = np.arange(0, 32)
+#x = np.arange(128, 160)
+x = np.arange(1, 33)
 y = G
-plt.plot(x, y, 'b-', label='H-Line')
 
+popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.017))
+#
+plt.plot(x, Difusion(x,popt[0],popt[1]), 'r-', label='Ajuste')
 
-popt, pcov = curve_fit(Difusion, x, y)
+plt.plot(x, Difusion(x,10,0.017), 'g-', label='Dibujada' )
+
+plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
+plt.ylabel(r'G($\xi$)',fontsize=14)
+#    plt.title('H-line  SCANNING  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
+plt.title('H-line')
+plt.legend()
+plt.show()
+plt.tight_layout() #hace que no me corte los márgenes
+
 
 
 
@@ -194,10 +209,10 @@ def Difusion_lmifit(params):
     box_size = params['boxsize']
     roi = params['roi']
     tp = params['tp']             #seg    
-    tl = box_size * tp    #seg
+    tl = box_size * tp            #seg
     dr = params['dr']             # delta r = pixel size =  micrometros
     w0 = params['w0']             #radio de la PSF  = micrometros    
-    wz = params['wz']              #alto de la PSF desde el centro  = micrometros
+    wz = params['wz']             #alto de la PSF desde el centro  = micrometros
     a = w0/wz
 
     return (gamma/N)*( 1 + 4*d*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*d*(tp*x+tl*y) / wz**2 )**(-1/2)
