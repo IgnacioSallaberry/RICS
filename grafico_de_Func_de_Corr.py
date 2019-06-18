@@ -39,7 +39,7 @@ plt.close('all') # antes de graficar, cierro todos las figuras que estén abiert
 j=1
 lista_S_2_Diff = []
 while j<2:
-    with open('C:\\Users\\ETCasa\\Desktop\\sim{}-5-4-19-DATA.txt'.format(j)) as fobj:
+    with open('C:\\Users\\LEC\\Desktop\\sim{}-5-4-19-DATA.txt'.format(j)) as fobj:
         DATA= fobj.read()
     j+=1 
 Funcion_de_correlacion= re.split('\t|\n', DATA)
@@ -65,15 +65,22 @@ while i< len(Funcion_de_correlacion):
     G.append(float(Funcion_de_correlacion[i+1]))
     
     i+=3
+##==============================================================================
+##                 Grafico la funcion de correlación en 3D
+##============================================================================== 
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.plot_trisurf(seda, psi, G,cmap='viridis', edgecolor='none')
+plt.show()
 
 
 ##==============================================================================
 ##                 Grafico la funcion de correlación en 2D
 ##==============================================================================        
-#plt.figure()
-#ACF = np.asarray(G)  #para graficar debo pasar de list a un array
-#plt.imshow(ACF.reshape(63,63))  
-#plt.show()
+plt.figure()
+ACF = np.asarray(G)  #para graficar debo pasar de list a un array
+plt.imshow(ACF.reshape(63,63))  
+plt.show()
 ### nota: que hace Reshape? lista.reshape()   toma la lista y, sin cambiar los valores, lo va cortando hasta acomodarlo en una matriz de nxm. Ojo que nxm debe ser = al len(lista)
 
 
@@ -103,9 +110,9 @@ while j<len(G):
 ##==============================================================================
 ##                 Grafico la linea horizontal en 1D
 ##============================================================================== 
-#plt.figure()
-#plt.plot(G, 'b*', label='ACF')
-#plt.show()
+plt.figure()
+plt.plot(G, 'b*', label='ACF')
+plt.show()
 
 ##==============================================================================
 ##                 AJUSTE DE LA LINEA HORIZONTAL
@@ -156,35 +163,31 @@ def Difusion (x,D,N):
 #
 #    return (gamma/N)*( 1 + 4*d*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
 
-
-
 #def Triplete (x,y,tp,tl,At,t_triplet):
 #    
 #    return 1+ At * np.exp(-(tp*x+tl*y)/t_triplet)
-#    
 #
 #def Binding(x,y,tp,tl,Ab,t_binding):
 #    
 #    return Ab * np.exp(-(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)
+#
+#
+x = np.arange(1, 33)
+y = G
 
+popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.017))
 #
-#
-#x = np.arange(1, 33)
-#y = G
-#
-#popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.017))
-##
-#plt.plot(x, Difusion(x,popt[0],popt[1]), 'r-', label='Ajuste')
-#
-#plt.plot(x, Difusion(x,10,0.017), 'g-', label='Dibujada' )
-#
-#plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
-#plt.ylabel(r'G($\xi$)',fontsize=14)
-##    plt.title('H-line  SCANNING  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
-#plt.title('H-line')
-#plt.legend()
-#plt.show()
-#plt.tight_layout() #hace que no me corte los márgenes
+plt.plot(x, Difusion(x,popt[0],popt[1]), 'r-', label='Ajuste')
+
+plt.plot(x, Difusion(x,10,0.017), 'g-', label='Dibujada' )
+
+plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
+plt.ylabel(r'G($\xi$)',fontsize=14)
+#    plt.title('H-line  SCANNING  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
+plt.title('H-line')
+plt.legend()
+plt.show()
+plt.tight_layout() #hace que no me corte los márgenes
 
 
 
@@ -206,7 +209,7 @@ while i< len(Funcion_de_correlacion):
     i+=3
 
 
-def Difusion (xy_mesh,D,N):
+def Difusion (xy_mesh, D, N):
     box_size = 256
     roi = 128
     tp = 5e-6             #seg    
@@ -219,28 +222,45 @@ def Difusion (xy_mesh,D,N):
     gamma = 0.3536        #gamma factor de la 3DG
    
     (x,y) = xy_mesh
+    
 
     return ((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) *
             np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
 
 
 
+##---> np.meshgrid() #Return coordinate matrices from coordinate vectors.
+x = np.arange(min(seda), max(seda)+1)
+#x = np.linspace(-1, 1, 63)
+y = x
+xy_mesh = np.meshgrid(x, y, sparse=True)
 
-###---> np.meshgrid() #Return coordinate matrices from coordinate vectors.
-#x = np.arange(63)
-#y = x
-#
-#xy_mesh = np.meshgrid(x, y, sparse=True)
-#z = np.asarray(G).reshape(np.outer(x, y).shape)
-#
-#fit_params, cov_mat = curve_fit(Difusion, xy_mesh, G, p0=(9.5,0.017))
+z = Difusion (xy_mesh, 9.5, 0.017)
+xx, yy = np.meshgrid(x, y, sparse=True)
+from mpl_toolkits.mplot3d import Axes3D
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot_surface(xx, yy,  Difusion (xy_mesh, 9.5, 0.017))
+plt.show()
 
-#plt.figure()
-#plt.contourf(x,y,z)
-##plt.pcolor(x, y, z)
-##plt.colorbar()
-#plt.title("ACF")
-#plt.show()    
+
+print(Difusion(xy_mesh, 9.5, 0.017))
+
+
+z = np.asarray(G).reshape(np.outer(x, y).shape)
+
+print(z.shape)
+
+
+
+fit_params, cov_mat = curve_fit(Difusion, xy_mesh, z, p0=(9.5,0.017))
+
+plt.figure()
+plt.contourf(x,y,z)
+#plt.pcolor(x, y, z)
+#plt.colorbar()
+plt.title("ACF")
+plt.show()    
 
 
 
@@ -266,42 +286,42 @@ def Difusion (xy_mesh,D,N):
 ##==============================================================================
 ##                 AJUSTE DE LA LINEA HORIZONTAL        VERSION   LMFIT
 ##==============================================================================    
-params = Parameters()
-params.add('boxsize', value=256, vary=False)
-params.add('roi', value=128, vary=False)
-params.add('tp', value=5e-6, vary=False)
-params.add('dr', value=0.05, vary=False)
-params.add('w0', value=0.25, vary=False)
-params.add('dz', value=0.05, vary=False)
-
-
-def Difusion_lmifit(params):
-    box_size = params['boxsize']
-    roi = params['roi']
-    tp = params['tp']             #seg    
-    tl = box_size * tp            #seg
-    dr = params['dr']             # delta r = pixel size =  micrometros
-    w0 = params['w0']             #radio de la PSF  = micrometros    
-    wz = params['wz']             #alto de la PSF desde el centro  = micrometros
-    a = w0/wz
-
-    
-
-    return (gamma/N)*( 1 + 4*d*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*d*(tp*x+tl*y) / wz**2 )**(-1/2)
-
+#params = Parameters()
+#params.add('boxsize', value=256, vary=False)
+#params.add('roi', value=128, vary=False)
+#params.add('tp', value=5e-6, vary=False)
+#params.add('dr', value=0.05, vary=False)
+#params.add('w0', value=0.25, vary=False)
+#params.add('dz', value=0.05, vary=False)
 #
-guess_vals = (9.5,0.017)
-lmfit_model = Model(Difusion_lmifit)
-lmfit_result = lmfit_model.fit(np.ravel(G), 
-                               xy_mesh=xy_mesh, 
-                               D=guess_vals[0], 
-                               N=guess_vals[1])
-
-lmfit_Rsquared = 1 - lmfit_result.residual.var()/np.var(noise)
-
-
-print('Fit R-squared:', lmfit_Rsquared, '\n')
-print(lmfit_result.fit_report())
+#
+#def Difusion_lmifit(params):
+#    box_size = params['boxsize']
+#    roi = params['roi']
+#    tp = params['tp']             #seg    
+#    tl = box_size * tp            #seg
+#    dr = params['dr']             # delta r = pixel size =  micrometros
+#    w0 = params['w0']             #radio de la PSF  = micrometros    
+#    wz = params['wz']             #alto de la PSF desde el centro  = micrometros
+#    a = w0/wz
+#
+#    
+#
+#    return (gamma/N)*( 1 + 4*d*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*d*(tp*x+tl*y) / wz**2 )**(-1/2)
+#
+##
+#guess_vals = (9.5,0.017)
+#lmfit_model = Model(Difusion_lmifit)
+#lmfit_result = lmfit_model.fit(np.ravel(G), 
+#                               xy_mesh=xy_mesh, 
+#                               D=guess_vals[0], 
+#                               N=guess_vals[1])
+#
+#lmfit_Rsquared = 1 - lmfit_result.residual.var()/np.var(noise)
+#
+#
+#print('Fit R-squared:', lmfit_Rsquared, '\n')
+#print(lmfit_result.fit_report())
 
 
 
