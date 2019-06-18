@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 import matplotlib.mlab as mlab
 
-with open('chi2_simFCS.txt') as fobj:
+with open('C:\\Users\\LEC\\Nacho\\5-4-19\\histograma\\chi2_simFCS.txt') as fobj:
         chi2_simFCS = fobj.read()
 
 lista_simFCS = []
@@ -27,9 +27,9 @@ j=1
 lista_S_2 = []
 
 while j<101:
-    with open('sim{}-5-4-19-AJUSTE.txt'.format(j)) as fobj:
+    with open('C:\\Users\\LEC\\Nacho\\5-4-19\\histograma\\sim{}-5-4-19-AJUSTE.txt'.format(j)) as fobj:
         datos_AJUSTE = fobj.read()
-    with open('sim{}-5-4-19-DATA.txt'.format(j)) as fobj:
+    with open('C:\\Users\\LEC\\Nacho\\5-4-19\\histograma\\sim{}-5-4-19-DATA.txt'.format(j)) as fobj:
         datos_DATA = fobj.read()
 
     tabla_AJUSTE = re.split('\t|\n', datos_AJUSTE)
