@@ -13,7 +13,7 @@ from scipy.stats import norm
 from scipy.optimize import curve_fit
 import matplotlib.mlab as mlab
 
-from lmfit import Parameters
+import lmfit 
 
 
 #==============================================================================
@@ -39,7 +39,7 @@ plt.close('all') # antes de graficar, cierro todos las figuras que estén abiert
 j=1
 lista_S_2_Diff = []
 while j<2:
-    with open('C:\\Users\\LEC\\Nacho\\5-4-19\\histograma\\ajuste\\sim{}-5-4-19-DATA.txt'.format(j)) as fobj:
+    with open('C:\\Users\\ETCasa\\Desktop\\sim{}-5-4-19-DATA.txt'.format(j)) as fobj:
         DATA= fobj.read()
     j+=1 
 Funcion_de_correlacion= re.split('\t|\n', DATA)
@@ -70,11 +70,11 @@ while i< len(Funcion_de_correlacion):
 ##==============================================================================
 ##                 Grafico la funcion de correlación en 2D
 ##==============================================================================        
-plt.figure()
-ACF = np.asarray(G)  #para graficar debo pasar de list a un array
-plt.imshow(ACF.reshape(63,63))  
-plt.show()
-#### nota: que hace Reshape? lista.reshape()   toma la lista y, sin cambiar los valores, lo va cortando hasta acomodarlo en una matriz de nxm. Ojo que nxm debe ser = al len(lista)
+#plt.figure()
+#ACF = np.asarray(G)  #para graficar debo pasar de list a un array
+#plt.imshow(ACF.reshape(63,63))  
+#plt.show()
+### nota: que hace Reshape? lista.reshape()   toma la lista y, sin cambiar los valores, lo va cortando hasta acomodarlo en una matriz de nxm. Ojo que nxm debe ser = al len(lista)
 
 
 
@@ -100,17 +100,19 @@ while j<len(G):
     seda1.append(j)
     j+=1
 
-#gragico la linea Horizontal
-plt.figure()
-plt.plot(G, 'b*', label='ACF')
-plt.show()
+##==============================================================================
+##                 Grafico la linea horizontal en 1D
+##============================================================================== 
+#plt.figure()
+#plt.plot(G, 'b*', label='ACF')
+#plt.show()
 
 ##==============================================================================
 ##                 AJUSTE DE LA LINEA HORIZONTAL
 ##==============================================================================    
 
 
-#                                  Parametros globales iniciales
+####                            Parametros globales iniciales
 box_size = 256
 roi = 128
 tp = 5e-6             #seg    
@@ -125,7 +127,6 @@ N = 200            #Numero total de particulas en la PSF
 
 
 
-#                                  Parametros globales iniciales
 def Scanning (x,y,dr,w0,tp,tl):
     
     return np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
@@ -146,7 +147,8 @@ def Difusion (x,D,N):
     
     y=0
     
-    return (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)   * np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
+    return ((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) *
+            np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
 
 
 
@@ -165,24 +167,92 @@ def Difusion (x,D,N):
 #    
 #    return Ab * np.exp(-(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)
 
-
-#x = np.arange(128, 160)
-x = np.arange(1, 33)
-y = G
-
-popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.017))
 #
-plt.plot(x, Difusion(x,popt[0],popt[1]), 'r-', label='Ajuste')
+#
+#x = np.arange(1, 33)
+#y = G
+#
+#popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.017))
+##
+#plt.plot(x, Difusion(x,popt[0],popt[1]), 'r-', label='Ajuste')
+#
+#plt.plot(x, Difusion(x,10,0.017), 'g-', label='Dibujada' )
+#
+#plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
+#plt.ylabel(r'G($\xi$)',fontsize=14)
+##    plt.title('H-line  SCANNING  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
+#plt.title('H-line')
+#plt.legend()
+#plt.show()
+#plt.tight_layout() #hace que no me corte los márgenes
 
-plt.plot(x, Difusion(x,10,0.017), 'g-', label='Dibujada' )
 
-plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
-plt.ylabel(r'G($\xi$)',fontsize=14)
-#    plt.title('H-line  SCANNING  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
-plt.title('H-line')
-plt.legend()
-plt.show()
-plt.tight_layout() #hace que no me corte los márgenes
+
+
+##==============================================================================
+##                 AJUSTE DE SUPERFICIE 2D
+##==============================================================================  
+
+i=0
+seda=[]
+psi=[]
+G=[]
+    
+while i< len(Funcion_de_correlacion):
+    seda.append(np.float(Funcion_de_correlacion[i]))
+    psi.append(float(Funcion_de_correlacion[i+2]))
+    G.append(float(Funcion_de_correlacion[i+1]))
+    
+    i+=3
+
+
+def Difusion (xy_mesh,D,N):
+    box_size = 256
+    roi = 128
+    tp = 5e-6             #seg    
+    tl = box_size * tp    #seg
+    dr = 0.05             # delta r = pixel size =  micrometros
+    w0 = 0.25             #radio de la PSF  = micrometros    
+    wz = 1.5              #alto de la PSF desde el centro  = micrometros
+    a = w0/wz
+    
+    gamma = 0.3536        #gamma factor de la 3DG
+   
+    (x,y) = xy_mesh
+
+    return ((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) *
+            np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
+
+
+
+
+###---> np.meshgrid() #Return coordinate matrices from coordinate vectors.
+#x = np.arange(63)
+#y = x
+#
+#xy_mesh = np.meshgrid(x, y, sparse=True)
+#z = np.asarray(G).reshape(np.outer(x, y).shape)
+#
+#fit_params, cov_mat = curve_fit(Difusion, xy_mesh, G, p0=(9.5,0.017))
+
+#plt.figure()
+#plt.contourf(x,y,z)
+##plt.pcolor(x, y, z)
+##plt.colorbar()
+#plt.title("ACF")
+#plt.show()    
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -215,10 +285,23 @@ def Difusion_lmifit(params):
     wz = params['wz']             #alto de la PSF desde el centro  = micrometros
     a = w0/wz
 
+    
+
     return (gamma/N)*( 1 + 4*d*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*d*(tp*x+tl*y) / wz**2 )**(-1/2)
 
+#
+guess_vals = (9.5,0.017)
+lmfit_model = Model(Difusion_lmifit)
+lmfit_result = lmfit_model.fit(np.ravel(G), 
+                               xy_mesh=xy_mesh, 
+                               D=guess_vals[0], 
+                               N=guess_vals[1])
+
+lmfit_Rsquared = 1 - lmfit_result.residual.var()/np.var(noise)
 
 
+print('Fit R-squared:', lmfit_Rsquared, '\n')
+print(lmfit_result.fit_report())
 
 
 
