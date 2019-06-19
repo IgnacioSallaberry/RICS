@@ -12,7 +12,7 @@ from scipy.stats import norm
 
 from scipy.optimize import curve_fit
 import matplotlib.mlab as mlab
-
+from mpl_toolkits.mplot3d import Axes3D
 import lmfit 
 
 
@@ -69,7 +69,7 @@ while i< len(Funcion_de_correlacion):
 ##                 Grafico la funcion de correlación en 3D
 ##============================================================================== 
 fig = plt.figure()
-ax = plt.axes(projection='3d')
+ax = fig.add_subplot(111, projection='3d')
 ax.plot_trisurf(seda, psi, G,cmap='viridis', edgecolor='none')
 plt.show()
 
@@ -170,13 +170,12 @@ def Difusion (x,D,N):
 #def Binding(x,y,tp,tl,Ab,t_binding):
 #    
 #    return Ab * np.exp(-(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)
-#
-#
-x = np.arange(1, 33)
+
+x = np.arange(0, 32)
 y = G
 
 popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.017))
-#
+
 plt.plot(x, Difusion(x,popt[0],popt[1]), 'r-', label='Ajuste')
 
 plt.plot(x, Difusion(x,10,0.017), 'g-', label='Dibujada' )
@@ -195,7 +194,6 @@ plt.tight_layout() #hace que no me corte los márgenes
 ##==============================================================================
 ##                 AJUSTE DE SUPERFICIE 2D
 ##==============================================================================  
-
 i=0
 seda=[]
 psi=[]
@@ -209,7 +207,7 @@ while i< len(Funcion_de_correlacion):
     i+=3
 
 
-def Difusion (xy_mesh, D, N):
+def Difusion (x, y, D, N):
     box_size = 256
     roi = 128
     tp = 5e-6             #seg    
@@ -220,41 +218,60 @@ def Difusion (xy_mesh, D, N):
     a = w0/wz
     
     gamma = 0.3536        #gamma factor de la 3DG
-   
-    (x,y) = xy_mesh
     
-
     return ((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) *
             np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
 
 
 
-##---> np.meshgrid() #Return coordinate matrices from coordinate vectors.
-x = np.arange(min(seda), max(seda)+1)
-#x = np.linspace(-1, 1, 63)
-y = x
-xy_mesh = np.meshgrid(x, y, sparse=True)
-
-z = Difusion (xy_mesh, 9.5, 0.017)
-xx, yy = np.meshgrid(x, y, sparse=True)
-from mpl_toolkits.mplot3d import Axes3D
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(xx, yy,  Difusion (xy_mesh, 9.5, 0.017))
-plt.show()
 
 
-print(Difusion(xy_mesh, 9.5, 0.017))
+##==============================================================================
+##                 CREO MATRIZ de tuplas (i,j)
+##============================================================================== 
+# ahora quiero hacer lo mismo pero que los valores vayan entre -31 y 31
+# ie: el ancho es 62, que es lo mismo que el roi que tengo, que sale de hacer 159-97 
+A=[]
+C=[]
+roi = max(seda)-min(seda)
+mitad_del_roi = roi/2
+seda_min = (-1)*mitad_del_roi
+seda_max = mitad_del_roi
+
+k=seda_min    #K va a recorrer las filas
+
+while k < mitad_del_roi+1:
+    j = 0
+    
+    while j<roi+1:
+        A.append((seda_min+j,k))  #parado en una fila, recorro las columnas
+        j+=1
+    
+    #me guardo la fila completa.
+    
+    k+=1
+
+#M = np.reshape(63,63)
+
+x = np.arange(-31, 32, 1)
+y = np.arange(-31, 32, 1)
+x, y = np.meshgrid(x, y)
+print(x,y)
+
+z = np.asarray(G).reshape(63,63)
+
+A = (x + 1j *y).flatten()
+
+def chi2(pars):
+    return np.sum((Difusion(x, y, pars[0], pars[1]) - z)**2)
+
+print(minimize(chi2, (10, 0.017)))
+
+print(chi2((10, 0.017)))
 
 
-z = np.asarray(G).reshape(np.outer(x, y).shape)
 
-print(z.shape)
-
-
-
-fit_params, cov_mat = curve_fit(Difusion, xy_mesh, z, p0=(9.5,0.017))
-
+fit_params, cov_mat = curve_fit(Difusion, A, G, p0=(9.5,0.017))
 plt.figure()
 plt.contourf(x,y,z)
 #plt.pcolor(x, y, z)
@@ -269,10 +286,104 @@ plt.show()
 
 
 
+##==============================================================================
+##                 CREO MATRIZ de tuplas (i,j)
+##============================================================================== 
+## ahora quiero hacer lo mismo pero que los valores vayan entre -31 y 31
+## ie: el ancho es 62, que es lo mismo que el roi que tengo, que sale de hacer 159-97 
+#A=[]
+#C=[]
+#roi = max(seda)-min(seda)
+#mitad_del_roi = roi/2
+#seda_min = (-1)*mitad_del_roi
+#seda_max = mitad_del_roi
+#
+#k=seda_min    #K va a recorrer las filas
+#
+#while k < mitad_del_roi+1:
+#    j = 0
+#    
+#    while j<roi+1:
+#        C.append((seda_min+j,k))  #parado en una fila, recorro las columnas
+#        j+=1
+#    
+#    A.append(C)  #me guardo la fila completa.
+#    C=[]
+#    k+=1
 
 
 
 
+
+
+
+#
+###---> np.meshgrid() #Return coordinate matrices from coordinate vectors.
+#x = np.arange(min(seda), max(seda)+1)
+##x = np.linspace(-1, 1, 63)
+#y = x
+#xy_mesh = np.meshgrid(x, y, sparse=True)
+#
+#z = Difusion (xy_mesh, 9.5, 0.017)
+#xx, yy = np.meshgrid(x, y, sparse=True)
+#
+#fig = plt.figure()
+#ax = fig.add_subplot(111, projection='3d')
+#ax.plot_surface(xx, yy,  Difusion (xy_mesh, 9.5, 0.017))
+#plt.show()
+#
+#
+#print(Difusion(xy_mesh, 9.5, 0.017))
+#
+#
+#z = np.asarray(G).reshape(np.outer(x, y).shape)
+#
+#print(z.shape)
+#
+#
+#
+#fit_params, cov_mat = curve_fit(Difusion, A, z, p0=(9.5,0.017))
+#
+#plt.figure()
+#plt.contourf(x,y,z)
+##plt.pcolor(x, y, z)
+##plt.colorbar()
+#plt.title("ACF")
+#plt.show()    
+
+
+
+
+
+
+
+
+##==============================================================================
+##                 Ejemplo de matriz de 5x5 de tuplas (i,j)
+##==============================================================================    
+A=[]
+B=[]
+C=[]
+k=-2
+while k<3:
+    j = 0
+    i=-2
+    while j<5:
+        C.append((i+j,k))
+        B.append((1,1))
+        
+        j+=1
+    
+    A.append(C)
+    C=[]
+    k+=1
+
+## esto va a dar la siguiente matriz:
+##[[(-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2)],
+## [(-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1)],
+## [(-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0)],
+## [(-2, 1), (-1, 1), (0, 1), (1, 1), (2, 1)],
+## [(-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2)]]
 
 
 
