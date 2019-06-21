@@ -36,30 +36,81 @@ D=10
 #D=[0.1,1,10,100,1000]
 #D=np.arange(1,1050,200)   #micrones^2/seg
 
+#==============================================================================
+#                                Inicializo tau = valores del eje x
+#==============================================================================    
+## acá exploro distintas formas para ver como puedo hacer para tener más valores al ppio (ie: tau=0) y no tantos al final
 
-tau=np.arange(1e-6,1,1e-6)
+#tau = np.arange(1e-6,1,1e-6)
+#tau1 = np.logspace(1e-6, 1, num=50)
+#plt.figure()
+#plt.plot(tau, label='tau')
+#plt.plot(tau1, label='tau1')
+#plt.legend()
+#plt.show()
+
+
+
+#defino tau
+tau = np.logspace(0, 10, num=1000)/1000000
+
+
+#==============================================================================
+#                                Defino tiempo de difusión de acuerdo a los parametros de arriba
+#==============================================================================    
 
 t_diff = w0**2/(4*D) 
 print('tiempo de difusion = {} segundos'.format(t_diff))
 
+#==============================================================================
+#                                Inicializo T= t_diff / t_bind 
+#==============================================================================    
 #T=[0.01,0.1,1,10,100]
-#T=[0.01,1,30]
-T=[30]
+T=[0.01,1,30]
+#T=[30]
 #T=[1]
 
 #t_binding=t_diff/T
 
 
-mu, sigma = 1, 1 # mean and standard deviation
+
+#==============================================================================
+#                                Creo el ruido para añadirle a las curvas
+#==============================================================================    
+
 #Ruido = np.random.randn(len(tau),1)
-j=0
-ruido = []
-while j<len(tau):
-#    ruido.append(0.5*np.random.uniform(0,2)-1)
-    ruido.append((j+1)**(-0.3)*1.5*((np.random.uniform(0,2)-1)))
-    j+=1   
+i=0
+ruido1 = []
+ruido2 = []
+ruido3 = []
 
+#ruido = np.arange()
+for i in tau:
 
+    ruido1.append(np.random.uniform(0,2)-1)
+    ruido2.append(np.random.uniform(0,2)-1)
+    ruido3.append(np.random.uniform(0,2)-1)
+
+sigmoide=np.arange(-1,20,0.02)
+modulacion1=[]
+modulacion2=[]
+modulacion3=[]
+i=0
+while i<len(sigmoide):
+    modulacion1.append(1. / (1. + np.exp(sigmoide[i]-3))*ruido1[i])
+    modulacion2.append(1. / (1. + np.exp(sigmoide[i]-3))*ruido2[i])
+    modulacion3.append(1. / (1. + np.exp(sigmoide[i]-3))*ruido3[i])
+    i+=1
+
+plt.figure()
+plt.plot(1. / (1. + np.exp(s-3)), label='modulacion')
+#plt.plot(tau1, label='tau1')
+plt.legend()
+plt.show()
+
+#def sigmoid(x, derivative=False):
+#    sigm = 1. / (1. + np.exp(-x))
+#
 
 #==============================================================================
 #                                Tipografía de los gráficos
@@ -88,6 +139,12 @@ plt.close('all') # amtes de graficar, cierro todos las figuras que estén abiert
 guardar_imagenes = False    
 
 for t in T:
+    if t==T[0]:
+        ruido=ruido1
+    elif t==T[1]:
+        ruido=ruido2
+    else:
+        ruido=ruido3
     t_binding=t_diff/t
     print(f'tiempo de binding= {t_binding} segundos')
     t_triplet=t_diff/t
@@ -136,7 +193,7 @@ for t in T:
 #==============================================================================
 #                                Ruido para las señales
 #==============================================================================    
-    Gtotal_ruido = Gtotal  + ruido
+    Gtotal_ruido = Gtotal  + modulacion
     Gtotal_ruido_normalizada = Gtotal_ruido/max(Gtotal_ruido)
 #    
    
