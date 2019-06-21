@@ -14,7 +14,7 @@ from scipy.optimize import curve_fit
 import matplotlib.mlab as mlab
 from mpl_toolkits.mplot3d import Axes3D
 import lmfit 
-
+from scipy import interpolate
 
 #==============================================================================
 #                                Tipografía de los gráficos
@@ -207,7 +207,7 @@ while i< len(Funcion_de_correlacion):
     i+=3
 
 
-def Difusion (x, y, D, N):
+def Difusion (X_DATA, D, N):
     box_size = 256
     roi = 128
     tp = 5e-6             #seg    
@@ -219,10 +219,14 @@ def Difusion (x, y, D, N):
     
     gamma = 0.3536        #gamma factor de la 3DG
     
+    x = np.abs(np.asarray([N[0] for N in X_DATA]))
+    y = np.abs(np.asarray([N[1] for N in X_DATA]))
+#    x = np.asarray(X_DATA[0])
+#    y = np.asarray(X_DATA[1])
+#    
+    
     return ((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) *
             np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
-
-
 
 
 
@@ -253,31 +257,59 @@ while k < mitad_del_roi+1:
 
 #M = np.reshape(63,63)
 
-x = np.arange(-31, 32, 1)
-y = np.arange(-31, 32, 1)
-x, y = np.meshgrid(x, y)
+x_1 = np.arange(-31, 32, 1)
+y_1 = np.arange(-31, 32, 1)
+x, y = np.meshgrid(x_1, y_1)
 print(x,y)
 
-z = np.asarray(G).reshape(63,63)
 
-A = (x + 1j *y).flatten()
+X_DATA = np.vstack((A))
 
-def chi2(pars):
-    return np.sum((Difusion(x, y, pars[0], pars[1]) - z)**2)
+X = [N[0] for N in X_DATA]
+Y = [N[1] for N in X_DATA]
 
-print(minimize(chi2, (10, 0.017)))
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot_trisurf(X,Y, Difusion(X_DATA,10,0.017),cmap='viridis', edgecolor='none')
+#ax.set_zlim(0,50)
+plt.show()
 
-print(chi2((10, 0.017)))
 
 
 
-fit_params, cov_mat = curve_fit(Difusion, A, G, p0=(9.5,0.017))
-plt.figure()
-plt.contourf(x,y,z)
-#plt.pcolor(x, y, z)
-#plt.colorbar()
+fit_params, cov_mat = curve_fit(Difusion,X_DATA, G, p0=(9.9,0.017))
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot_trisurf(X,Y, Difusion(X_DATA,fit_params[0],fit_params[1]),cmap='viridis', edgecolor='none')
+#ax.set_zlim(0,50)
+plt.show()
+
 plt.title("ACF")
 plt.show()    
+
+
+
+
+
+########   version hernan
+#A = (x + 1j *y).flatten()
+#
+#def chi2(pars):
+#    return np.sum((Difusion(x, y, pars[0], pars[1]) - z)**2)
+#
+#print(minimize(chi2, (10, 0.017)))
+#
+#print(chi2((10, 0.017)))
+#
+#
+#
+#fit_params, cov_mat = curve_fit(Difusion, A, G, p0=(9.5,0.017))
+#plt.figure()
+#plt.contourf(x,y,z)
+##plt.pcolor(x, y, z)
+##plt.colorbar()
+#plt.title("ACF")
+#plt.show()    
 
 
 
@@ -397,36 +429,36 @@ while k<3:
 ##==============================================================================
 ##                 AJUSTE DE LA LINEA HORIZONTAL        VERSION   LMFIT
 ##==============================================================================    
-#params = Parameters()
-#params.add('boxsize', value=256, vary=False)
-#params.add('roi', value=128, vary=False)
-#params.add('tp', value=5e-6, vary=False)
-#params.add('dr', value=0.05, vary=False)
-#params.add('w0', value=0.25, vary=False)
-#params.add('dz', value=0.05, vary=False)
-#
-#
-#def Difusion_lmifit(params):
-#    box_size = params['boxsize']
-#    roi = params['roi']
-#    tp = params['tp']             #seg    
-#    tl = box_size * tp            #seg
-#    dr = params['dr']             # delta r = pixel size =  micrometros
-#    w0 = params['w0']             #radio de la PSF  = micrometros    
-#    wz = params['wz']             #alto de la PSF desde el centro  = micrometros
-#    a = w0/wz
-#
-#    
-#
-#    return (gamma/N)*( 1 + 4*d*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*d*(tp*x+tl*y) / wz**2 )**(-1/2)
-#
-##
-#guess_vals = (9.5,0.017)
-#lmfit_model = Model(Difusion_lmifit)
-#lmfit_result = lmfit_model.fit(np.ravel(G), 
-#                               xy_mesh=xy_mesh, 
-#                               D=guess_vals[0], 
-#                               N=guess_vals[1])
+params = Parameters()
+params.add('boxsize', value=256, vary=False)
+params.add('roi', value=128, vary=False)
+params.add('tp', value=5e-6, vary=False)
+params.add('dr', value=0.05, vary=False)
+params.add('w0', value=0.25, vary=False)
+params.add('dz', value=0.05, vary=False)
+
+
+def Difusion_lmifit(params):
+    box_size = params['boxsize']
+    roi = params['roi']
+    tp = params['tp']             #seg    
+    tl = box_size * tp            #seg
+    dr = params['dr']             # delta r = pixel size =  micrometros
+    w0 = params['w0']             #radio de la PSF  = micrometros    
+    wz = params['wz']             #alto de la PSF desde el centro  = micrometros
+    a = w0/wz
+
+    
+
+    return (gamma/N)*( 1 + 4*d*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*d*(tp*x+tl*y) / wz**2 )**(-1/2)
+
+X_DATA = np.vstack((A))
+guess_vals = (9.5,0.017)
+lmfit_model = Model(Difusion_lmifit)
+lmfit_result = lmfit_model.fit(np.ravel(G), 
+                               xy_mesh=xy_mesh, 
+                               D=guess_vals[0], 
+                               N=guess_vals[1])
 #
 #lmfit_Rsquared = 1 - lmfit_result.residual.var()/np.var(noise)
 #
