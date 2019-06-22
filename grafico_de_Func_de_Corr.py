@@ -10,7 +10,7 @@ import re
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, minimize
 import matplotlib.mlab as mlab
 from mpl_toolkits.mplot3d import Axes3D
 import lmfit 
@@ -19,6 +19,8 @@ from scipy import interpolate
 #==============================================================================
 #                                Tipografía de los gráficos
 #==============================================================================    
+mostrar_imagenes = False
+
 SMALL_SIZE = 10
 MEDIUM_SIZE = 16
 BIGGER_SIZE = 18
@@ -39,7 +41,7 @@ plt.close('all') # antes de graficar, cierro todos las figuras que estén abiert
 j=1
 lista_S_2_Diff = []
 while j<2:
-    with open('C:\\Users\\LEC\\Desktop\\sim{}-5-4-19-DATA.txt'.format(j)) as fobj:
+    with open('C:\\Users\\ETcasa\\Desktop\\sim{}-5-4-19-DATA.txt'.format(j)) as fobj:
         DATA= fobj.read()
     j+=1 
 Funcion_de_correlacion= re.split('\t|\n', DATA)
@@ -68,19 +70,24 @@ while i< len(Funcion_de_correlacion):
 ##==============================================================================
 ##                 Grafico la funcion de correlación en 3D
 ##============================================================================== 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_trisurf(seda, psi, G,cmap='viridis', edgecolor='none')
-plt.show()
-
+if mostrar_imagenes:
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_trisurf(seda, psi, G,cmap='viridis', edgecolor='none')
+    plt.show()
+else:
+    pass
 
 ##==============================================================================
 ##                 Grafico la funcion de correlación en 2D
 ##==============================================================================        
-plt.figure()
-ACF = np.asarray(G)  #para graficar debo pasar de list a un array
-plt.imshow(ACF.reshape(63,63))  
-plt.show()
+if mostrar_imagenes:
+    plt.figure()
+    ACF = np.asarray(G)  #para graficar debo pasar de list a un array
+    plt.imshow(ACF.reshape(63,63))  
+    plt.show()
+else:
+    pass
 ### nota: que hace Reshape? lista.reshape()   toma la lista y, sin cambiar los valores, lo va cortando hasta acomodarlo en una matriz de nxm. Ojo que nxm debe ser = al len(lista)
 
 
@@ -110,10 +117,12 @@ while j<len(G):
 ##==============================================================================
 ##                 Grafico la linea horizontal en 1D
 ##============================================================================== 
-plt.figure()
-plt.plot(G, 'b*', label='ACF')
-plt.show()
-
+if mostrar_imagenes:
+    plt.figure()
+    plt.plot(G, 'b*', label='ACF')
+    plt.show()
+else:
+    pass
 ##==============================================================================
 ##                 AJUSTE DE LA LINEA HORIZONTAL
 ##==============================================================================    
@@ -130,7 +139,7 @@ wz = 1.5              #alto de la PSF desde el centro  = micrometros
 a = w0/wz
 
 gamma = 0.3536        #gamma factor de la 3DG
-N = 200            #Numero total de particulas en la PSF
+N = 0.017           #Numero total de particulas en la PSF
 
 
 
@@ -159,10 +168,6 @@ def Difusion (x,D,N):
 
 
 
-#def Difusion (x,y,gamma,N,w0,wz,tp,tl):
-#
-#    return (gamma/N)*( 1 + 4*d*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
-
 #def Triplete (x,y,tp,tl,At,t_triplet):
 #    
 #    return 1+ At * np.exp(-(tp*x+tl*y)/t_triplet)
@@ -176,19 +181,20 @@ y = G
 
 popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.017))
 
-plt.plot(x, Difusion(x,popt[0],popt[1]), 'r-', label='Ajuste')
+if mostrar_imagenes:
+    plt.plot(x, Difusion(x,popt[0],popt[1]), 'r-', label='Ajuste')
 
-plt.plot(x, Difusion(x,10,0.017), 'g-', label='Dibujada' )
-
-plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
-plt.ylabel(r'G($\xi$)',fontsize=14)
-#    plt.title('H-line  SCANNING  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
-plt.title('H-line')
-plt.legend()
-plt.show()
-plt.tight_layout() #hace que no me corte los márgenes
-
-
+    plt.plot(x, Difusion(x,10,0.017), 'g-', label='Dibujada' )
+    
+    plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
+    plt.ylabel(r'G($\xi$)',fontsize=14)
+    #    plt.title('H-line  SCANNING  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
+    plt.title('H-line')
+    plt.legend()
+    plt.show()
+    plt.tight_layout() #hace que no me corte los márgenes
+else:
+    pass
 
 
 ##==============================================================================
@@ -260,7 +266,7 @@ while k < mitad_del_roi+1:
 x_1 = np.arange(-31, 32, 1)
 y_1 = np.arange(-31, 32, 1)
 x, y = np.meshgrid(x_1, y_1)
-print(x,y)
+#print(x,y)
 
 
 X_DATA = np.vstack((A))
@@ -268,203 +274,126 @@ X_DATA = np.vstack((A))
 X = [N[0] for N in X_DATA]
 Y = [N[1] for N in X_DATA]
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_trisurf(X,Y, Difusion(X_DATA,10,0.017),cmap='viridis', edgecolor='none')
-#ax.set_zlim(0,50)
-plt.show()
+if mostrar_imagenes:
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_trisurf(X,Y, Difusion(X_DATA,10,0.017),cmap='viridis', edgecolor='none')
+    #ax.set_zlim(0,50)
+    plt.show()
+else:
+    pass
+
+
+fit_params, cov_mat = curve_fit(Difusion,X_DATA, G, p0=(9.5,0.017))
+if mostrar_imagenes:
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_trisurf(X,Y, Difusion(X_DATA,fit_params[0],fit_params[1]),cmap='viridis', edgecolor='none')
+    #ax.set_zlim(0,50)
+    plt.show()
+
+    plt.title("ACF")
+    plt.show()    
+else:
+    pass
 
 
 
+def chi2(X_DATA,D,N):
+    return np.sum((Difusion(X_DATA, D, N) - G)**2)/3969
 
-fit_params, cov_mat = curve_fit(Difusion,X_DATA, G, p0=(9.9,0.017))
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot_trisurf(X,Y, Difusion(X_DATA,fit_params[0],fit_params[1]),cmap='viridis', edgecolor='none')
-#ax.set_zlim(0,50)
-plt.show()
 
-plt.title("ACF")
-plt.show()    
+print(chi2(X_DATA,fit_params[0],fit_params[1]))
 
 
 
-
-
-########   version hernan
-#A = (x + 1j *y).flatten()
+###==============================================================================
+###                 AJUSTE DE LA LINEA HORIZONTAL        VERSION   LMFIT
+###==============================================================================    
+#def Difusion_lmifit(x,boxsize,roi,tp,dr,w0,wz,D,N):
+##    print('Estos son los valores de X_DATA = {}'.format(X_DATA))
+#    x,y=np.abs(X_DATA[0])
+##    y=X_DATA[0][1]
+##    x = np.abs(np.asarray([N[0] for N in X_DATA]))
+##    y = np.abs(np.asarray([N[1] for N in X_DATA]))
 #
-#def chi2(pars):
-#    return np.sum((Difusion(x, y, pars[0], pars[1]) - z)**2)
-#
-#print(minimize(chi2, (10, 0.017)))
-#
-#print(chi2((10, 0.017)))
+#    return (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
 #
 #
 #
-#fit_params, cov_mat = curve_fit(Difusion, A, G, p0=(9.5,0.017))
-#plt.figure()
-#plt.contourf(x,y,z)
-##plt.pcolor(x, y, z)
-##plt.colorbar()
-#plt.title("ACF")
-#plt.show()    
-
-
-
-
-
-
-
-
-##==============================================================================
-##                 CREO MATRIZ de tuplas (i,j)
-##============================================================================== 
-## ahora quiero hacer lo mismo pero que los valores vayan entre -31 y 31
-## ie: el ancho es 62, que es lo mismo que el roi que tengo, que sale de hacer 159-97 
-#A=[]
-#C=[]
-#roi = max(seda)-min(seda)
-#mitad_del_roi = roi/2
-#seda_min = (-1)*mitad_del_roi
-#seda_max = mitad_del_roi
+#lmfit_model = lmfit.Model(Difusion_lmifit, independent_vars=['D','N'])
+#print(lmfit_model.param_names)
+#print(lmfit_model.independent_vars)
 #
-#k=seda_min    #K va a recorrer las filas
+#params = lmfit_model.make_params()
+#params.add('boxsize', value=256, vary=False)
+#params.add('roi', value=128, vary=False)
+#params.add('tp', value=5e-6, vary=False)
+#params.add('dr', value=0.05, vary=False)
+#params.add('w0', value=0.25, vary=False)
 #
-#while k < mitad_del_roi+1:
-#    j = 0
-#    
-#    while j<roi+1:
-#        C.append((seda_min+j,k))  #parado en una fila, recorro las columnas
-#        j+=1
-#    
-#    A.append(C)  #me guardo la fila completa.
-#    C=[]
-#    k+=1
-
-
-
-
-
-
-
+#params.add('wz', value=0.05, vary=False)
+#params.add('x', value=X_DATA.all(), vary=False)
 #
-###---> np.meshgrid() #Return coordinate matrices from coordinate vectors.
-#x = np.arange(min(seda), max(seda)+1)
-##x = np.linspace(-1, 1, 63)
-#y = x
-#xy_mesh = np.meshgrid(x, y, sparse=True)
 #
-#z = Difusion (xy_mesh, 9.5, 0.017)
-#xx, yy = np.meshgrid(x, y, sparse=True)
+##params = lmfit_model.make_params(x=X_DATA.all(), boxsize=256, roi=128, tp=5e-6, dr=0.05, w0=0.25, wz=1.5)   #creo los parametros
+#
+#
+#
+#guess_vals = (9.5,0.017)
+#
+#lmfit_result = lmfit_model.fit(G, 
+#                               params,
+#                               D=guess_vals[0],
+#                               N=guess_vals[1])
+##lmfit_Rsquared = 1 - lmfit_result.residual.var()/np.var(noise)
+##
+##
+##print('Fit R-squared:', lmfit_Rsquared, '\n')
+#print(lmfit_result.fit_report())
+#
 #
 #fig = plt.figure()
-#ax = fig.add_subplot(111, projection='3d')
-#ax.plot_surface(xx, yy,  Difusion (xy_mesh, 9.5, 0.017))
+#ax = fig.add_subplot(121, projection='3d')
+#ax.plot_trisurf(X,Y, G,cmap='viridis', edgecolor='none')
+#ax = fig.add_subplot(122, projection='3d')
+#ax.plot_trisurf(X,Y, lmfit_result.init_fit,cmap='viridis', edgecolor='none')
+#ax = fig.add_subplot(123, projection='3d')
+#ax.plot_trisurf(X,Y, lmfit_result.best_fit,cmap='viridis', edgecolor='none')
 #plt.show()
+
 #
 #
-#print(Difusion(xy_mesh, 9.5, 0.017))
+#params = lmfit.Parameters()
+#params.add('boxsize', value=256, vary=False)
+#params.add('roi', value=128, vary=False)
+#params.add('tp', value=5e-6, vary=False)
+#params.add('dr', value=0.05, vary=False)
+#params.add('w0', value=0.25, vary=False)
+#params.add('dz', value=0.05, vary=False)
+#params.add('D', value=9.5, vary=True)
+#params.add('N', value=0.017, vary=True)
 #
 #
-#z = np.asarray(G).reshape(np.outer(x, y).shape)
+
+#def Difusion_lmifit(X_DATA, paramss):
+#    box_size = paramss['boxsize'].value
+#    roi = paramss['roi'].value
+#    tp = paramss['tp'].value             #seg    
+#    tl = box_size * tp            #seg
+#    dr = paramss['dr'].value             # delta r = pixel size =  micrometros
+#    w0 = paramss['w0'].value             #radio de la PSF  = micrometros    
+#    wz = paramss['wz'].value             #alto de la PSF desde el centro  = micrometros
+#    a = w0/wz
 #
-#print(z.shape)
+#    x=X_DATA[0]
+#    y=X_DATA[1]
 #
-#
-#
-#fit_params, cov_mat = curve_fit(Difusion, A, z, p0=(9.5,0.017))
-#
-#plt.figure()
-#plt.contourf(x,y,z)
-##plt.pcolor(x, y, z)
-##plt.colorbar()
-#plt.title("ACF")
-#plt.show()    
-
-
-
-
-
-
-
-
-##==============================================================================
-##                 Ejemplo de matriz de 5x5 de tuplas (i,j)
-##==============================================================================    
-A=[]
-B=[]
-C=[]
-k=-2
-while k<3:
-    j = 0
-    i=-2
-    while j<5:
-        C.append((i+j,k))
-        B.append((1,1))
-        
-        j+=1
-    
-    A.append(C)
-    C=[]
-    k+=1
-
-## esto va a dar la siguiente matriz:
-##[[(-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2)],
-## [(-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1)],
-## [(-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0)],
-## [(-2, 1), (-1, 1), (0, 1), (1, 1), (2, 1)],
-## [(-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2)]]
-
-
-
-
-
-
-
-
-
-
-##==============================================================================
-##                 AJUSTE DE LA LINEA HORIZONTAL        VERSION   LMFIT
-##==============================================================================    
-params = Parameters()
-params.add('boxsize', value=256, vary=False)
-params.add('roi', value=128, vary=False)
-params.add('tp', value=5e-6, vary=False)
-params.add('dr', value=0.05, vary=False)
-params.add('w0', value=0.25, vary=False)
-params.add('dz', value=0.05, vary=False)
-
-
-def Difusion_lmifit(params):
-    box_size = params['boxsize']
-    roi = params['roi']
-    tp = params['tp']             #seg    
-    tl = box_size * tp            #seg
-    dr = params['dr']             # delta r = pixel size =  micrometros
-    w0 = params['w0']             #radio de la PSF  = micrometros    
-    wz = params['wz']             #alto de la PSF desde el centro  = micrometros
-    a = w0/wz
-
-    
-
-    return (gamma/N)*( 1 + 4*d*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*d*(tp*x+tl*y) / wz**2 )**(-1/2)
-
-X_DATA = np.vstack((A))
-guess_vals = (9.5,0.017)
-lmfit_model = Model(Difusion_lmifit)
-lmfit_result = lmfit_model.fit(np.ravel(G), 
-                               xy_mesh=xy_mesh, 
-                               D=guess_vals[0], 
-                               N=guess_vals[1])
-#
-#lmfit_Rsquared = 1 - lmfit_result.residual.var()/np.var(noise)
+#    return (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
 #
 #
-#print('Fit R-squared:', lmfit_Rsquared, '\n')
-#print(lmfit_result.fit_report())
+#
+
 
 
 
@@ -488,3 +417,34 @@ lmfit_result = lmfit_model.fit(np.ravel(G),
 #plt.figure()
 #plt.imshow(G)
 #plt.colorbar()
+
+
+
+#para guardar a la posteridad
+
+##==============================================================================
+##                 Ejemplo de matriz de 5x5 de tuplas (i,j)
+##==============================================================================    
+#A=[]
+#B=[]
+#C=[]
+#k=-2
+#while k<3:
+#    j = 0
+#    i=-2
+#    while j<5:
+#        C.append((i+j,k))
+#        B.append((1,1))
+#        
+#        j+=1
+#    
+#    A.append(C)
+#    C=[]
+#    k+=1
+
+## esto va a dar la siguiente matriz:
+##[[(-2, -2), (-1, -2), (0, -2), (1, -2), (2, -2)],
+## [(-2, -1), (-1, -1), (0, -1), (1, -1), (2, -1)],
+## [(-2, 0), (-1, 0), (0, 0), (1, 0), (2, 0)],
+## [(-2, 1), (-1, 1), (0, 1), (1, 1), (2, 1)],
+## [(-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2)]]
