@@ -38,14 +38,22 @@ plt.close('all') # antes de graficar, cierro todos las figuras que estén abiert
 #==============================================================================
 #                 Datos originales:  Filtro el txt
 #==============================================================================    
+### que proceso vas a ver?
+###elegir un nombre para el nombre del txt que se va a crear con la lista de S2
+#proceso = 'difusion'
+proceso = 'difusion y binding'
+
+
+
 q=1
 S_2_ajustado_por_python_Diff_Y_Bind= []
 while q<101:
+    print(q)
     if q==4 or q==85:
         q+=1
     else:
         pass
-    with open('C:\\Users\\ETCasa\\Desktop\\S2 una especie y dos procesos\\sim{}_una_especie_DATA.txt'.format(q)) as fobj:
+    with open('C:\\Users\\LEC\\Desktop\\S2\\S2 una especie y dos procesos\\sim{}_una_especie_DATA.txt'.format(q)) as fobj:
         DATA= fobj.read()
         
     Funcion_de_correlacion= re.split('\t|\n', DATA)
@@ -167,10 +175,11 @@ while q<101:
         
         y=0
         
-        return (((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) +
-                Ab * np.exp(-(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)) *
-                np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
+        return (((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) + 
+                 Ab * np.exp(-(tp*x+tl*y)/t_binding)) *
+                np.exp(-0.25*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
     
+#                Ab * np.exp(-0.25*(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)) *
     
     
     #def Triplete (x,y,tp,tl,At,t_triplet):
@@ -184,7 +193,7 @@ while q<101:
     x = np.arange(0, 32)
     y = G
     
-    popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.017, 1, 0.9))
+    popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.031, 5, 0.5))
     
     if mostrar_imagenes:
         plt.plot(x, Difusion(x,popt[0],popt[1]), 'r-', label='Ajuste')
@@ -235,11 +244,11 @@ while q<101:
     #    x = np.asarray(X_DATA[0])
     #    y = np.asarray(X_DATA[1])
     #    
+        Dif = (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
+        Binding = Ab * np.exp(-0.25*(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding) 
+        Scan = np.exp(-0.25*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2)))   
         
-        return (((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) +
-                Ab * np.exp(-(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)) *
-                np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
-    
+        return ((Dif * Binding + Dif + Binding) * Scan)
     
     
     ##==============================================================================
@@ -283,14 +292,14 @@ while q<101:
     if mostrar_imagenes:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot_trisurf(X,Y, Difusion_y_Binding(X_DATA,10,0.017,1,0.9),cmap='viridis', edgecolor='none')
+        ax.plot_trisurf(X,Y, Difusion_y_Binding(X_DATA,10,0.031,1,0.9),cmap='viridis', edgecolor='none')
         #ax.set_zlim(0,50)
         plt.show()
     else:
         pass
     
     
-    fit_params, cov_mat = curve_fit(Difusion_y_Binding,X_DATA, G, p0=(9.5,0.017,1,0.9))
+    fit_params, cov_mat = curve_fit(Difusion_y_Binding,X_DATA, G, p0=(9.5,0.031,1,0.9))
     if mostrar_imagenes:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -316,7 +325,7 @@ while q<101:
     q+=1
     ##### para guardar los datos
 
-with open('S2 calculado de ajustar con python __ Ajuste de proceso de difusion y binding por modelo de DIFUSION_y_BINDING.txt','w') as f:
+with open('S2 calculado de ajustar con python __ Ajuste de proceso de {} por modelo de DIFUSION_y_BINDING.txt'.format(proceso),'w') as f:
     for valor in S_2_ajustado_por_python_Diff_Y_Bind:
         #como el archivo no existe python lo va a crear
         #si el archivo ya existiese entonces python lo reescribirá
