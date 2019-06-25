@@ -19,7 +19,7 @@ from scipy import interpolate
 #==============================================================================
 #                                Tipografía de los gráficos
 #==============================================================================    
-mostrar_imagenes = False
+mostrar_imagenes = True
 
 SMALL_SIZE = 10
 MEDIUM_SIZE = 16
@@ -47,7 +47,7 @@ proceso = 'difusion y binding'
 
 q=1
 S_2_ajustado_por_python_Diff_Y_Bind= []
-while q<101:
+while q<2:
     print(q)
     if q==4 or q==85:
         q+=1
@@ -155,12 +155,8 @@ while q<101:
     
     
     
-    def Scanning (x,y,dr,w0,tp,tl):
-        
-        return np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
     
-    
-    def Difusion (x,D,N, Ab, t_binding):
+    def Difusion_y_Binding_H_line (x,D,N, Ab, t_binding):
         box_size = 256
         roi = 128
         tp = 5e-6             #seg    
@@ -175,30 +171,25 @@ while q<101:
         
         y=0
         
-        return (((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) + 
-                 Ab * np.exp(-(tp*x+tl*y)/t_binding)) *
-                np.exp(-0.25*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
+        Dif = (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
+        Binding = Ab * np.exp(-0.25*(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding) 
+        Scan = np.exp(-0.25*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2)))   
+        
+        return ((Dif * Binding + Dif + Binding) * Scan)
     
-#                Ab * np.exp(-0.25*(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)) *
     
-    
-    #def Triplete (x,y,tp,tl,At,t_triplet):
-    #    
-    #    return 1+ At * np.exp(-(tp*x+tl*y)/t_triplet)
-    #
-    #def Binding(x,y,tp,tl,Ab,t_binding):
-    #    
-    #    return Ab * np.exp(-(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)
-    
+
     x = np.arange(0, 32)
     y = G
     
-    popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.031, 5, 0.5))
+    guess_values = [9.5,0.031,5,0.5]  ##Valores iniciales para el ajuste [D,N,Ab, t_binding]
+    
+    popt, pcov = curve_fit(Difusion_y_Binding_H_line, x, y, p0=(guess_values[0],guess_values[1],guess_values[2],guess_values[3]))
     
     if mostrar_imagenes:
-        plt.plot(x, Difusion(x,popt[0],popt[1]), 'r-', label='Ajuste')
+        plt.plot(x, Difusion_y_Binding_H_line(x,popt[0],popt[1],popt[2],popt[3]), 'r-', label='Ajuste')
     
-        plt.plot(x, Difusion(x,10,0.017), 'g-', label='Dibujada' )
+        plt.plot(x, Difusion_y_Binding_H_line(x,10,0.031,max(G), 0.5), 'g-', label='Dibujada' )
         
         plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
         plt.ylabel(r'G($\xi$)',fontsize=14)
@@ -286,9 +277,13 @@ while q<101:
     
     X_DATA = np.vstack((A))
     
+    fit_params, cov_mat = curve_fit(Difusion_y_Binding,X_DATA, G, p0=(9.5,0.031,1,0.9))
+    
+    
+    
     X = [N[0] for N in X_DATA]
     Y = [N[1] for N in X_DATA]
-    
+   
     if mostrar_imagenes:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -297,13 +292,11 @@ while q<101:
         plt.show()
     else:
         pass
-    
-    
-    fit_params, cov_mat = curve_fit(Difusion_y_Binding,X_DATA, G, p0=(9.5,0.031,1,0.9))
+        
     if mostrar_imagenes:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot_trisurf(X,Y, Difusion_y_Binding(X_DATA,fit_params[0],fit_params[1]),cmap='viridis', edgecolor='none')
+        ax.plot_trisurf(X,Y, Difusion_y_Binding(X_DATA,fit_params[0],fit_params[1],fit_params[2],fit_params[3]),cmap='viridis', edgecolor='none')
         #ax.set_zlim(0,50)
         plt.show()
     
