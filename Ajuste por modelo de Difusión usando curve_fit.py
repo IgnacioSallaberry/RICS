@@ -38,22 +38,32 @@ plt.close('all') # antes de graficar, cierro todos las figuras que estén abiert
 #==============================================================================
 #                 Datos originales:  Filtro el txt
 #==============================================================================    
-
+guess_val = [10,0.05]  #inicializo valores con los que voy a ajustar
 ### que proceso vas a ver?
 ###elegir un nombre para el nombre del txt que se va a crear con la lista de S2
-proceso = 'difusion'
-#proceso = 'difusion y binding'
+
+
 
 
 q=1
 S_2_ajustado_por_python_Diff = []
-while q<101:
+
+#proceso = 'difusion pura'
+#while q<101:
 #    print('simulacion numero {}'.format(q))
-    if q==12 or q==47:
-        q+=1
-    else:
-        pass
-    with open('C:\\Users\\LEC\\Desktop\\S2\\S2 una especie y un proceso\\sim{}-5-4-19-DATA.txt'.format(q)) as fobj:
+#    if q==12 or q==47:
+#        q+=1
+#    else:
+#        pass
+#    with open('C:\\Users\\LEC\\Desktop\\S2\\S2 una especie y un proceso - Difusion PURA\\sim{}-5-4-19-DATA.txt'.format(q)) as fobj:
+
+proceso = 'binding puro'        
+while q<59:
+    print('simulacion numero {}'.format(q))
+    with open('C:\\Users\\LEC\\Desktop\\Proceso de binding solo\\200 simulaciones Binding Puro\\sim{}-Proceso_de_binding_puro-DATA.txt'.format(q)) as fobj:
+        
+        
+        
         DATA= fobj.read()
         
     Funcion_de_correlacion= re.split('\t|\n', DATA)
@@ -161,13 +171,9 @@ while q<101:
     N = 0.017           #Numero total de particulas en la PSF
     
     
+
     
-    def Scanning (x,y,dr,w0,tp,tl):
-        
-        return np.exp(-0.5*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
-    
-    
-    def Difusion (x,D,N):
+    def Difusion_H_line (x,D,N):
         box_size = 256
         roi = 128
         tp = 5e-6             #seg    
@@ -179,31 +185,24 @@ while q<101:
         
         gamma = 0.3536        #gamma factor de la 3DG
        
-        
         y=0
+
+        Dif = (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
+        Scan = Scan = np.exp((-0.5*((x*dr/w0)**2+(y*dr/w0)**2))/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
         
-        return ((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) *
-                np.exp(-0.25*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
+        return (Dif * Scan)
     
     
-    
-    #def Triplete (x,y,tp,tl,At,t_triplet):
-    #    
-    #    return 1+ At * np.exp(-(tp*x+tl*y)/t_triplet)
-    #
-    #def Binding(x,y,tp,tl,Ab,t_binding):
-    #    
-    #    return Ab * np.exp(-(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_binding)
-    
+
     x = np.arange(0, 32)
     y = G  #ACF escrito en tira, no en sabana
     
-    popt, pcov = curve_fit(Difusion, x, y, p0=(9.5,0.017))
+    popt, pcov = curve_fit(Difusion_H_line, x, y, p0=(guess_val[0],guess_val[1]))
     
     if mostrar_imagenes:
-        plt.plot(x, Difusion(x,popt[0],popt[1]), 'r.-', label='Ajuste')
+        plt.plot(x, Difusion_H_line(x,popt[0],popt[1]), 'r.-', label='Ajuste')
     
-        plt.plot(x, Difusion(x,10,0.031), 'g-', label='Dibujada' )
+        plt.plot(x, Difusion_H_line(x,guess_val[0],guess_val[1]), 'g-', label='Dibujada' )
         
         plt.xlabel(r'pixel shift $\xi$')# - $\mu m$',fontsize=14)
         plt.ylabel(r'G($\xi$)')#,fontsize=14)
@@ -249,8 +248,10 @@ while q<101:
     #    y = np.asarray(X_DATA[1])
     #    
         
-        return ((gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2) *
-                np.exp(-0.25*((2*x*dr/w0)**2+(2*y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2))))
+        Dif = (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
+        Scan = Scan = np.exp((-0.5*((x*dr/w0)**2+(y*dr/w0)**2))/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
+        
+        return (Dif * Scan)
     
     
     
@@ -287,7 +288,7 @@ while q<101:
     if mostrar_imagenes:
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot_trisurf(X,Y, Difusion(X_DATA,10,0.031),cmap='viridis', edgecolor='none')
+        ax.plot_trisurf(X,Y, Difusion(X_DATA,guess_val[0],guess_val[1]),cmap='viridis', edgecolor='none')
         ax.set_xlabel(r'pixel shift $\xi$', fontsize=15)
         ax.set_ylabel(r'pixel shift $\psi$',fontsize=15)
         ax.set_zlabel(r'G($\xi$,$\psi$)',fontsize=15)
@@ -300,7 +301,7 @@ while q<101:
         pass
     
     
-    fit_params, cov_mat = curve_fit(Difusion,X_DATA, G, p0=(9.5,0.017))
+    fit_params, cov_mat = curve_fit(Difusion,X_DATA, G, p0=(guess_val[0],guess_val[1]))
     
     
     
