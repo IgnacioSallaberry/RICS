@@ -58,7 +58,7 @@ S_2_ajustado_por_python_Diff = []
 #    with open('C:\\Users\\LEC\\Desktop\\S2\\S2 una especie y un proceso - Difusion PURA\\sim{}-5-4-19-DATA.txt'.format(q)) as fobj:
 
 proceso = 'binding puro'        
-while q<59:
+while q<61:
     print('simulacion numero {}'.format(q))
     with open('C:\\Users\\LEC\\Desktop\\Proceso de binding solo\\200 simulaciones Binding Puro\\sim{}-Proceso_de_binding_puro-DATA.txt'.format(q)) as fobj:
         
@@ -148,7 +148,7 @@ while q<59:
     ##============================================================================== 
     if mostrar_imagenes:
         plt.figure()
-        plt.plot(G, 'b*', label='ACF')
+        plt.plot(G, 'b*', label='ACF que da el simFCS')
         plt.show()
     else:
         pass
@@ -188,7 +188,7 @@ while q<59:
         y=0
 
         Dif = (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
-        Scan = Scan = np.exp((-0.5*((x*dr/w0)**2+(y*dr/w0)**2))/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
+        Scan = np.exp(-((x*dr/w0)**2+(y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
         
         return (Dif * Scan)
     
@@ -202,11 +202,11 @@ while q<59:
     if mostrar_imagenes:
         plt.plot(x, Difusion_H_line(x,popt[0],popt[1]), 'r.-', label='Ajuste')
     
-        plt.plot(x, Difusion_H_line(x,guess_val[0],guess_val[1]), 'g-', label='Dibujada' )
+        plt.plot(x, Difusion_H_line(x,guess_val[0],guess_val[1]), 'g-', label='Dibujada poniendo \n valores conocidos' )
         
         plt.xlabel(r'pixel shift $\xi$')# - $\mu m$',fontsize=14)
         plt.ylabel(r'G($\xi$)')#,fontsize=14)
-        plt.title('H-line')
+        plt.title(f'H-line \n Proceso:{proceso} - Ajuste:Difusion')
         plt.legend()
         plt.show()
         plt.tight_layout() #hace que no me corte los márgenes
@@ -249,7 +249,7 @@ while q<59:
     #    
         
         Dif = (gamma/N)*( 1 + 4*D*(tp*x+tl*y) / w0**2 )**(-1) * ( 1 + 4*D*(tp*x+tl*y) / wz**2 )**(-1/2)
-        Scan = Scan = np.exp((-0.5*((x*dr/w0)**2+(y*dr/w0)**2))/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
+        Scan = np.exp(-((x*dr/w0)**2+(y*dr/w0)**2)/(1 + 4*D*(tp*x+tl*y)/(w0**2)))
         
         return (Dif * Scan)
     
