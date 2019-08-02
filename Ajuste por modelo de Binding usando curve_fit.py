@@ -38,7 +38,7 @@ plt.close('all') # antes de graficar, cierro todos las figuras que estén abiert
 #==============================================================================
 #                 Datos originales:  Filtro el txt
 #==============================================================================    
-
+guess_val=[0.05,1.75,0.005]
 ### que proceso vas a ver?
 ###elegir un nombre para el nombre del txt que se va a crear con la lista de S2
 
@@ -46,20 +46,20 @@ plt.close('all') # antes de graficar, cierro todos las figuras que estén abiert
 q=1
 S_2_ajustado_por_python_Binding = []
 
-proceso = 'difusion pura'
-while q<101:
-    print('simulacion numero {}'.format(q))
-    if q==12 or q==47:
-        q+=1
-    else:
-        pass
-    with open('C:\\Users\\LEC\\Desktop\\S2\\S2 una especie y un proceso - Difusion PURA\\sim{}-5-4-19-DATA.txt'.format(q)) as fobj:
-
-#proceso = 'binding puro'        
-#while q<59:
+#proceso = 'difusion pura'
+#while q<101:
 #    print('simulacion numero {}'.format(q))
-#    with open('C:\\Users\\LEC\\Desktop\\Proceso de binding solo\\200 simulaciones Binding Puro\\sim{}-Proceso_de_binding_puro-DATA.txt'.format(q)) as fobj:
-#      
+#    if q==12 or q==47:
+#        q+=1
+#    else:
+#        pass
+#    with open('C:\\Users\\LEC\\Desktop\\S2\\S2 una especie y un proceso - Difusion PURA\\sim{}-5-4-19-DATA.txt'.format(q)) as fobj:
+
+proceso = 'binding puro'        
+while q<61:
+    print('simulacion numero {}'.format(q))
+    with open('C:\\Users\\LEC\\Desktop\\Proceso de binding solo\\200 simulaciones Binding Puro\\sim{}-Proceso_de_binding_puro-DATA.txt'.format(q)) as fobj:
+      
     
         DATA= fobj.read()
         
@@ -145,7 +145,7 @@ while q<101:
     ##============================================================================== 
     if mostrar_imagenes:
         plt.figure()
-        plt.plot(G, 'b*', label='ACF')
+        plt.plot(G, 'b*', label='ACF que da el simFCS')
         plt.show()
     else:
         pass
@@ -185,37 +185,34 @@ while q<101:
         
         
         y=0
-        
-        D=0
-#        Bind = Ab * np.exp(-(tp*x+tl*y)/t_bind) 
-#        Scan = np.exp(-(x*dr/w0)**2-(y*dr/w0)**2)   
-        Bind = Ab * np.exp(-0.25*(x*dr/w0)**2-(y*dr/w0))* np.exp(-(tp*x+tl*y)/t_bind) 
-        Scan = np.exp(-0.5*((x*dr/w0)**2+(y*dr/w0)**2))   
-        return (      ((gamma/N) * Bind + (gamma/N) + Bind) * Scan       )
+
+        Bind = Ab * np.exp(-(tp*x+tl*y)/t_bind) 
+        Scan = np.exp(-((x*dr/w0)**2+(y*dr/w0)**2))   
+        return (gamma/N) * Bind * Scan       
 #        return ( (gamma/N) + Bind) * Scan
       
 
     
-#    x = np.arange(0, 32)
-#    y = G  #ACF escrito en tira, no en sabana
-#    
-#    popt, pcov = curve_fit(Binding_H_line, x, y, p0=(0.05,1.75,0.005))
-#    
-#    if mostrar_imagenes:
-#        plt.plot(x, Binding_H_line(x,popt[0],popt[1],popt[2]), 'r.-', label='Ajuste')
-#    
-#        plt.plot(x, Binding_H_line(x,0.05,1.75,0.005), 'g-', label='Dibujada' )
-#        
-#        plt.xlabel(r'pixel shift $\xi$')# - $\mu m$',fontsize=14)
-#        plt.ylabel(r'G($\xi$)')#,fontsize=14)
-#        plt.title('H-line')
-#        plt.legend()
-#        plt.show()
-#        plt.tight_layout() #hace que no me corte los márgenes
-#    else:
-#        pass
-#    
-#    
+    x = np.arange(0, 32)
+    y = G  #ACF escrito en tira, no en sabana
+    
+    popt, pcov = curve_fit(Binding_H_line, x, y, p0=(0.05,1.75,0.005))
+    
+    if mostrar_imagenes:
+        plt.plot(x, Binding_H_line(x,popt[0],popt[1],popt[2]), 'r.-', label='Ajuste')
+    
+        plt.plot(x, Binding_H_line(x,guess_val[0],guess_val[1],guess_val[2]), 'g-', label='Dibujada poniendo \n valores conocidos' )
+        
+        plt.xlabel(r'pixel shift $\xi$')# - $\mu m$',fontsize=14)
+        plt.ylabel(r'G($\xi$)')#,fontsize=14)
+        plt.title(f'H-line \n Proceso:{proceso} - Ajuste:Binding' )
+        plt.legend()
+        plt.show()
+        plt.tight_layout() #hace que no me corte los márgenes
+    else:
+        pass
+    
+    
     ##==============================================================================
     ##                 AJUSTE DE SUPERFICIE 3D
     ##==============================================================================  
@@ -250,12 +247,10 @@ while q<101:
         
         D=0
 
-#        Bind = Ab * np.exp(-(tp*x+tl*y)/t_bind) 
-#        Scan = np.exp(-(x*dr/w0)**2-(y*dr/w0)**2)   
+ 
         Bind = Ab * np.exp(-(tp*x+tl*y)/t_bind) 
-        Scan = np.exp(-0.5*((x*dr/w0)**2+(y*dr/w0)**2))   
-        
-        return (      ((gamma/N) * Bind + (gamma/N) + Bind) * Scan       )
+        Scan = np.exp(-((x*dr/w0)**2+(y*dr/w0)**2))   
+        return (gamma/N) * Bind * Scan   
 #        return ( (gamma/N) + Bind) 
         
     
