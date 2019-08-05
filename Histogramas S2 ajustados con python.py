@@ -151,9 +151,25 @@ std_err_ajuste_Diff_por_Dif = sigma_ajuste_Diff_por_Dif / N_ajuste_Diff_por_Dif 
 #std_err_ajuste_Diff = sigma_ajuste_Dif_y_Bind_por_Dif_y_Bind / N_ajuste_Dif_y_Bind_por_Dif_y_Bind# error estándar
 
 
+
 #==============================================================================
 #                           #####     HISTOGRAMAS  graficados en figura de 2x2  #####
 #==============================================================================    
+
+#==============================================================================
+#                           #####     Funcion Gaussiana  #####
+#==============================================================================   
+def Gaussiana(mu,sigma):
+     
+    x_inicial = mu-3.5*sigma
+    x_final = mu+3.5*sigma
+    x_gaussiana=np.linspace(x_inicial,x_final,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
+   
+    gaussiana3=(1/np.sqrt(2*np.pi*(sigma**2)))*np.exp((-.5)*((x_gaussiana-mu)/(sigma))**2)
+
+    return (x_gaussiana,gaussiana3)
+
+
 fig = plt.figure()
 bineado = 10
 #==============================================================================    
@@ -165,18 +181,15 @@ ax1 =fig.add_subplot(2,2,1)
 #ax1.set_xlabel('$S^2$')
 ax1.set_ylabel('Proceso:\n Binding \n')
 ax1.set_title('Ajuste:\n Binding')#, fontsize=20)
-n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_bind, bins=bineado, color='C1', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_bind, bins=bineado, color='lightsalmon', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-x_inicial = mu_ajuste_BindingPURO_por_BindingPURO-3.5*sigma_ajuste_BindingPURO_por_BindingPURO
-x_final = mu_ajuste_BindingPURO_por_BindingPURO+3.5*sigma_ajuste_BindingPURO_por_BindingPURO
-x_gaussiana=np.linspace(x_inicial,x_final,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
 
+plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[0],
+         Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[1],
+         'r--', linewidth=3, 
+         label='Proceso: Bind \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
+         )
 
-#gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_BindingPURO_por_BindingPURO**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_BindingPURO_por_BindingPURO)/(sigma_ajuste_BindingPURO_por_BindingPURO))**2)
-
-#plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-plt.plot(x_gaussiana,gaussiana3,'r--', linewidth=3, label='Proceso: Bind \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)) #grafico la gaussiana
 plt.legend()
 #==============================================================================    
 #                               Proceso Binding
@@ -187,17 +200,15 @@ ax1 =fig.add_subplot(2,2,2)
 #ax1.set_xlabel('$S^2$')
 ax1.set_ylabel('Proceso:\n Binding \n')
 ax1.set_title('Ajuste:\n Difusion')#, fontsize=20)
-n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_dif, bins=bineado, color='C2', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_dif, bins=bineado, color='indianred', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-x_inicial = mu_ajuste_BindingPURO_por_Dif-3.5*sigma_ajuste_BindingPURO_por_Dif
-x_final = mu_ajuste_BindingPURO_por_Dif+3.5*sigma_ajuste_BindingPURO_por_Dif
-x_gaussiana=np.linspace(x_inicial,x_final,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
 
-#gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_BindingPURO_por_Dif**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_BindingPURO_por_Dif)/(sigma_ajuste_BindingPURO_por_Dif))**2)
+plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[0],
+         Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[1],
+         '--',color='#8f1402', linewidth=3, 
+         label='Proceso: Bind \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
+         )
 
-#plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-plt.plot(x_gaussiana,gaussiana3,'g--', linewidth=3, label='Proceso: Bind \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_Dif, sigma_ajuste_BindingPURO_por_Dif)) #grafico la gaussiana
 plt.legend()
 #==============================================================================    
 #                               Proceso Difusion
@@ -208,108 +219,34 @@ ax1 =fig.add_subplot(2,2,3)
 #ax1.set_xlabel('$S^2$')
 ax1.set_ylabel('Proceso:\n Difusion \n')
 ax1.set_title('Ajuste:\n Binding')#, fontsize=20)
-n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_bind, bins=bineado, color='C3', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_bind, bins=bineado, color='C0', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-x_inicial = mu_ajuste_Dif_por_Bind-3.5*sigma_ajuste_Diff_por_Bind
-x_final = mu_ajuste_Dif_por_Bind+3.5*sigma_ajuste_Diff_por_Bind
-x_gaussiana=np.linspace(x_inicial,x_final,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
 
+plt.plot(Gaussiana(mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)[0],
+         Gaussiana(mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)[1],
+         'b--', linewidth=3, 
+         label='Proceso: Dif \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)
+         )
 
-#gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_Diff_por_Bind**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_Dif_por_Bind)/(sigma_ajuste_Diff_por_Bind))**2)
-
-#plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-plt.plot(x_gaussiana,gaussiana3,'r--',color='#8f1402', linewidth=3, label='Proceso: Dif \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)) #grafico la gaussiana
 plt.legend()
 #==============================================================================    
 #                               Proceso Difusion
 #                               Ajuste: Difusion
 #==============================================================================    
 ax1 =fig.add_subplot(2,2,4)
-#bins_ajuste = np.arange(min(lista_S_2), max(lista_S_2)) # le pongo los bins a mano
-#ax1.set_xlabel('$S^2$')
 ax1.set_ylabel('Proceso:\n Difusion \n')
 ax1.set_title('Ajuste:\n Difusion')#, fontsize=20)
-n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_dif, bins=bineado, color='C4', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_dif, bins=bineado, color='mediumaquamarine', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-x_inicial = mu_ajuste_Dif_por_Dif-3.5*sigma_ajuste_Diff_por_Dif
-x_final = mu_ajuste_Dif_por_Dif+3.5*sigma_ajuste_Diff_por_Dif
-x_gaussiana=np.linspace(x_inicial,x_final,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
 
+plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
+         Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[1],
+         '--',color='forestgreen', linewidth=3, 
+         label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         )
 
-#gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_Diff_por_Dif**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_Dif_por_Dif)/(sigma_ajuste_Diff_por_Dif))**2)
-
-#plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-plt.plot(x_gaussiana,gaussiana3,'r--',color='#cb416b', linewidth=3, label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
 plt.legend()
-##==============================================================================    
-##                               Proceso Difusion
-##                               Ajuste: Difusion y binding
-##==============================================================================    
-#ax2 =fig.add_subplot(2,2,2)
-##ax2.set_xlabel('$S^2$')
-##ax2.set_ylabel('Proceso:\n Difusion')
-#ax2.set_title('Ajuste:\n Difusion y Binding')#, fontsize=20)
-#
-##bins_ajuste = np.arange(min(lista_S_2), max(lista_S_2)) # le pongo los bins a mano
-#
-#n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_dif_y_bind, bins=bineado,color='C3', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
-#bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-#x_gaussiana=np.linspace(mu_ajuste_Dif_por_Dif_y_Bind-3.5*sigma_ajuste_Dif_por_Dif_y_Bind,325,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
-#
-#
-##gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-#gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_Dif_por_Dif_y_Bind**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_Dif_por_Dif_y_Bind)/(sigma_ajuste_Dif_por_Dif_y_Bind))**2)
-#
-##plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-#plt.plot(x_gaussiana,gaussiana3, '--', color='#8f1402', linewidth=3, label='Proceso: D \n Ajuste: D y B \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif_y_Bind, sigma_ajuste_Dif_por_Dif_y_Bind)) #grafico la gaussiana
-#plt.legend()
-##==============================================================================    
-##                               Proceso Difusion y Binding
-##                               Ajuste: Difusion
-##==============================================================================    
-#ax3 =fig.add_subplot(2,2,3)
-#ax3.set_xlabel('$S^2$')#, fontsize=20)
-#ax3.set_ylabel('Proceso:\n Difusion y Binding \n')
-##ax1.set_title('', )
-#
-##bins_ajuste = np.arange(min(lista_S_2), max(lista_S_2)) # le pongo los bins a mano
-#
-#n,bin_positions_ajuste,p  = plt.hist(S2_dif_y_bind_ajustado_por_dif, bins=bineado,color='C4', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
-#bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-#x_gaussiana=np.linspace(mu_ajuste_Dif_y_Bind_por_Dif-3.5*sigma_ajuste_Dif_y_Bind_por_Dif,325,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
-#
-#
-##gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-#gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_Dif_y_Bind_por_Dif**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_Dif_y_Bind_por_Dif)/(sigma_ajuste_Dif_y_Bind_por_Dif))**2)
-#
-##plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-#plt.plot(x_gaussiana,gaussiana3,'--', color='#cb416b', linewidth=3, label='Proceso: D y B \n Ajuste: D  \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_y_Bind_por_Dif, sigma_ajuste_Dif_y_Bind_por_Dif)) #grafico la gaussiana
-#plt.legend()
-##==============================================================================    
-##                               Proceso Difusion y Binding
-##                               Ajuste: Difusion y Binding
-##==============================================================================    
-#ax4 =fig.add_subplot(2,2,4)
-#ax4.set_xlabel('$S^2$')#, fontsize=20)
-##ax4.set_ylabel('Proceso:\n Difusion y Binding')
-#
-##bins_ajuste = np.arange(min(lista_S_2), max(lista_S_2)) # le pongo los bins a mano
-#
-#n,bin_positions_ajuste,p  = plt.hist(S2_dif_y_bind_ajustado_por_dif_y_bind, bins=bineado,color = 'C0', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
-#bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-#x_gaussiana=np.linspace(mu_ajuste_Dif_y_Bind_por_Dif_y_Bind-3.5*sigma_ajuste_Dif_y_Bind_por_Dif_y_Bind,325,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
-#
-##gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-#gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_Dif_y_Bind_por_Dif_y_Bind**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_Dif_y_Bind_por_Dif_y_Bind)/(sigma_ajuste_Dif_y_Bind_por_Dif_y_Bind))**2)
-#
-##plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-#plt.plot(x_gaussiana,gaussiana3,'b--', linewidth=3, label='Proceso: D y B \n Ajuste: D y B\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_y_Bind_por_Dif_y_Bind, sigma_ajuste_Dif_y_Bind_por_Dif_y_Bind)) #grafico la gaussiana
-
-
-#plt.gcf().subplots_adjust(bottom=0.15)
-plt.legend()
+plt.gcf().subplots_adjust(bottom=0.15)
 plt.show()
 
 
@@ -319,55 +256,9 @@ plt.show()
 
 
 ##==============================================================================
-##                           #####     HISTOGRAMAS  graficados en figura de 2x2  #####
+##                           #####     HISTOGRAMAS  Superpuestos  #####
 ##==============================================================================    
 #fig = plt.figure()
-###==============================================================================    
-###                               Proceso Difusion 
-###                               Ajuste: Binding
-###==============================================================================    
-#n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_bind, bins=bineado, color='C3', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
-#bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-#x_inicial = mu_ajuste_Dif_por_Bind-3.5*sigma_ajuste_Diff_por_Bind
-#x_final = mu_ajuste_Dif_por_Bind+3.5*sigma_ajuste_Diff_por_Bind
-#x_gaussiana=np.linspace(x_inicial,x_final,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
-#
-#
-##gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-#gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_Diff_por_Bind**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_Dif_por_Bind)/(sigma_ajuste_Diff_por_Bind))**2)
-#
-##plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-#plt.plot(x_gaussiana,gaussiana3,'r--',color='#8f1402', linewidth=3, label='Proceso: Dif \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)) #grafico la gaussiana
-#plt.legend()
-#
-#
-##==============================================================================    
-##                               Proceso Difusion
-##                               Ajuste: Difusion
-##==============================================================================    
-##ax1 =fig.add_subplot(2,2,1)
-##bins_ajuste = np.arange(min(lista_S_2), max(lista_S_2)) # le pongo los bins a mano
-##ax1.set_xlabel('$S^2$')
-##ax1.set_ylabel('Proceso:\n Difusion')
-##ax1.set_title('Ajuste:\n Difusion', fontsize=20)
-#n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_dif, bins=bineado, color='C1', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
-#bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-#x_gaussiana=np.linspace(mu_ajuste_Dif_por_Dif-3.5*sigma_ajuste_Diff_por_Dif,250,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
-#
-#
-##gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-#gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_Diff_por_Dif**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_Dif_por_Dif)/(sigma_ajuste_Diff_por_Dif))**2)
-#
-##plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-#plt.plot(x_gaussiana,gaussiana3,'r--', linewidth=3, label='Proceso: D \n Ajuste: D \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-#plt.xlabel('$S^2$')
-#plt.ylabel('Frecuencia')
-#plt.legend()
-#
-#
-#plt.legend()
-#plt.show()
-
 
 
 ##==============================================================================    
@@ -408,43 +299,73 @@ plt.show()
 #plt.show()
 plt.figure()
 #==============================================================================    
-#                               Proceso Difusion
+#                               Proceso Binding
 #                               Ajuste: Difusion
 #==============================================================================    
-
-n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_dif, bins=bineado, color='C4', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_dif, bins=bineado, color='indianred', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-x_inicial = mu_ajuste_Dif_por_Dif-3.5*sigma_ajuste_Diff_por_Dif
-x_final = mu_ajuste_Dif_por_Dif+3.5*sigma_ajuste_Diff_por_Dif
-x_gaussiana=np.linspace(x_inicial,x_final,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
 
+plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[0],
+         Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[1],
+         '--',color='#8f1402', linewidth=3, 
+         label='Proceso: Bind \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         )
 
-#gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_Diff_por_Dif**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_Dif_por_Dif)/(sigma_ajuste_Diff_por_Dif))**2)
-
-#plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-plt.plot(x_gaussiana,gaussiana3,'r--',color='#cb416b', linewidth=3, label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
 plt.legend()
-plt.show()
+
 
 #==============================================================================    
 #                               Proceso Binding
 #                               Ajuste: Binding
 #==============================================================================    
-n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_bind, bins=bineado, color='C1', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_bind, bins=bineado, color='lightsalmon', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-x_inicial = mu_ajuste_BindingPURO_por_BindingPURO-3.5*sigma_ajuste_BindingPURO_por_BindingPURO
-x_final = mu_ajuste_BindingPURO_por_BindingPURO+3.5*sigma_ajuste_BindingPURO_por_BindingPURO
-x_gaussiana=np.linspace(x_inicial,x_final,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
+
+plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[0],
+         Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[1],
+         'r--', linewidth=3, 
+         label='Proceso: Bind \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
+         )
+
+plt.legend()
+plt.show()
 
 
-#gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_BindingPURO_por_BindingPURO**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_BindingPURO_por_BindingPURO)/(sigma_ajuste_BindingPURO_por_BindingPURO))**2)
 
-#plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-plt.plot(x_gaussiana,gaussiana3,'r--', linewidth=3, label='Proceso: Bind \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)) #grafico la gaussiana
+
+
+plt.figure()
+#==============================================================================    
+#                               Proceso Difusion
+#                               Ajuste: Difusion
+#==============================================================================    
+n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_dif, bins=bineado, color='mediumaquamarine', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
+
+plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
+         Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[1],
+         '--',color='forestgreen', linewidth=3, 
+         label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         )
+
 plt.legend()
 
+
+#==============================================================================    
+#                               Proceso Binding
+#                               Ajuste: Binding
+#==============================================================================    
+n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_bind, bins=bineado, color='lightsalmon', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
+
+plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[0],
+         Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[1],
+         'r--', linewidth=3, 
+         label='Proceso: Bind \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
+         )
+
+plt.legend()
+plt.show()
 
 
 
@@ -456,36 +377,103 @@ plt.figure()
 ##                               Proceso Difusion
 ##                               Ajuste: Binding
 ##==============================================================================    
-n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_bind, bins=bineado,color='C3', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_bind, bins=bineado, color='steelblue', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-x_inicial = mu_ajuste_Dif_por_Bind-3.5*sigma_ajuste_Diff_por_Bind
-x_final = mu_ajuste_Dif_por_Bind+3.5*sigma_ajuste_Diff_por_Bind
-x_gaussiana=np.linspace(x_inicial,x_final,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
+
+plt.plot(Gaussiana(mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)[0],
+         Gaussiana(mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)[1],
+         'b--', linewidth=3, 
+         label='Proceso: Dif \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)
+         )
+
+plt.legend()
+#==============================================================================    
+#                               Proceso Difusion
+#                               Ajuste: Difusion
+#==============================================================================    
+n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_dif, bins=bineado, color='mediumaquamarine', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
+
+plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
+         Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[1],
+         '--',color='forestgreen', linewidth=3, 
+         label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         )
+
+plt.legend()
+plt.gcf().subplots_adjust(bottom=0.15)
+plt.show()
 
 
-#gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_Diff_por_Bind**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_Dif_por_Bind)/(sigma_ajuste_Diff_por_Bind))**2)
 
-#plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-plt.plot(x_gaussiana,gaussiana3, '--', color='#8f1402', linewidth=3, label='Proceso: Difusion \n Ajuste: Binding \n $\mu$= {:.4f} - $\sigma$ = {:.4f}'.format(mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)) #grafico la gaussiana
+
+
+
+
+
+
+
+
+plt.figure()
+#==============================================================================    
+#                               Proceso Binding
+#                               Ajuste: Difusion
+#==============================================================================    
+n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_dif, bins=bineado, color='indianred', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
+
+plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[0],
+         Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[1],
+         '--',color='#8f1402', linewidth=3, 
+         label='Proceso: Bind \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         )
+
 plt.legend()
 
 #==============================================================================    
 #                               Proceso Difusion
 #                               Ajuste: Difusion
 #==============================================================================    
-
-n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_dif, bins=bineado, color='C4', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
+n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_dif, bins=bineado, color='mediumaquamarine', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
-x_inicial = mu_ajuste_Dif_por_Dif-3.5*sigma_ajuste_Diff_por_Dif
-x_final = mu_ajuste_Dif_por_Dif+3.5*sigma_ajuste_Diff_por_Dif
-x_gaussiana=np.linspace(x_inicial,x_final,num=100) # armo una lista de puntos donde quiero graficar la distribución de ajuste
 
+plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
+         Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[1],
+         '--',color='forestgreen', linewidth=3, 
+         label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         )
 
-#gaussiana=mlab.normpdf(x_gaussiana, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)*N_ajuste_Diff_por_Dif*bin_size_ajuste # dibujo la gaussiana que corresponde al histograma
-gaussiana3=(1/np.sqrt(2*np.pi*(sigma_ajuste_Diff_por_Dif**2)))*np.exp((-.5)*((x_gaussiana-mu_ajuste_Dif_por_Dif)/(sigma_ajuste_Diff_por_Dif))**2)
-
-#plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
-plt.plot(x_gaussiana,gaussiana3,'r--',color='#cb416b', linewidth=3, label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
 plt.legend()
+plt.gcf().subplots_adjust(bottom=0.15)
 plt.show()
+
+
+
+
+
+
+
+
+
+#==============================================================================
+#                           #####     p-valor Critico      #####
+#                                   Binding ajustado por dos modelos
+#==============================================================================   
+#S2_critico = mu_ajuste_Dif_por_Dif
+#
+#integral_Binding_ajustado_Difusion = 1 - norm.cdf(S2_critico, mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)
+#integral_Binding_ajustado_Binding = norm.cdf(S2_critico, mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)                                                            
+#     
+#incremento = 0.0001
+#
+#                                                 
+#while integral_Difusion_ajustado_Difusion > integral_Difusion_ajustado_Binding:
+#    S2_critico += incremento                                             
+#    integral_Difusion_ajustado_Difusion = 1 - norm.cdf(S2_critico, mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)
+#    integral_Difusion_ajustado_Binding = norm.cdf(S2_critico, mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind) 
+#                                                   
+#S2_critico = S2_critico - incremento
+#integral_Binding_ajustado_Difusion= 1 - norm.cdf(S2_critico, mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)
+#integral_Binding_ajustado_Binding = norm.cdf(S2_critico, mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)                                                            
+#                                                    
+#print('S2_critico = {} \n p-valor dif ajustado por difusion = {} \n p-valor dif ajustado por binding = {}'.format(S2_critico,integral_Binding_ajustado_Difusion,integral_Binding_ajustado_Binding))
