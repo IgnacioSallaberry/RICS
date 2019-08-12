@@ -200,56 +200,88 @@ print( trapz(A[1],A[0],max(A[0])/100) )
 #                           #####     p-valor Critico      #####
 #==============================================================================   
 
-
-
-S2_critico = mu_ajuste_Dif_por_Dif
-
-p_valor_dif_por_dif=[]
-p_valor_dif_por_bind=[]
-S2_X = []
-
-S2_CRITICO=0
-
-integral_Difusion_ajustado_Difusion = 1 - norm.cdf(S2_critico, mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)
-integral_Difusion_ajustado_Binding = norm.cdf(S2_critico, mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)                                                            
-     
-incremento = 0.0001
-
-                                                   
-while integral_Difusion_ajustado_Difusion > 0.00001:
-    S2_critico += incremento                                             
-    p_valor_dif_por_dif.append(integral_Difusion_ajustado_Difusion)
-    p_valor_dif_por_bind.append(integral_Difusion_ajustado_Binding)
-    S2_X.append(S2_critico)
-    if integral_Difusion_ajustado_Difusion - integral_Difusion_ajustado_Binding > incremento:
-        S2_CRITICO = S2_critico
+def p_valor(S2_1, mu_1, sigma_1, S2_2, mu_2, sigma_2):
+    S2_critico = mu_1
     
-    integral_Difusion_ajustado_Difusion = 1 - norm.cdf(S2_critico, mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)
-    integral_Difusion_ajustado_Binding = norm.cdf(S2_critico, mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind) 
+    p_valor1=[]
+    p_valor2=[]
+    S2_X = []
     
+    S2_CRITICO='hola'
+    
+    S2_critico=mu_1
+    
+    integral_1 = 1 - norm.cdf(S2_critico, mu_1, sigma_1)
+    integral_2 = norm.cdf(S2_critico, mu_2, sigma_2)                                                            
+         
+    incremento = 0.0001
+                                                 
+    while integral_1 > 0.00001:
+        S2_critico += incremento                                             
+        p_valor1.append(integral_1)
+        p_valor2.append(integral_2)
+        S2_X.append(S2_critico)
+        if integral_1 - integral_2> incremento:
+            S2_CRITICO = S2_critico
+        
+        integral_1 = 1 - norm.cdf(S2_critico, mu_1, sigma_1)
+        integral_2 = norm.cdf(S2_critico, mu_2, sigma_2) 
+
+    return (S2_X, p_valor1, p_valor2, S2_CRITICO)
+    
+
+
+#==============================================================================    
+#                               Proceso Difusion
+#                               Ajuste: Difusion  y   BINDING
+#==============================================================================        
+P=p_valor(S2_dif_ajustado_por_dif, mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif, 
+          S2_dif_ajustado_por_bind, mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)
+
 plt.figure()
-plt.semilogy(S2_X, p_valor_dif_por_dif,'--',color='forestgreen',label='Proceso: Dif \n Ajuste: Dif' )
-plt.semilogy(S2_X, p_valor_dif_por_bind,'b--',label='Proceso: Dif \n Ajuste: Bind' )
-plt.axvline(x=S2_CRITICO,color='r')
-plt.text(S2_CRITICO+0.0008,0.0007,s='$S^2$ critico = {:.5f}'.format(S2_CRITICO), color='r',rotation=90)
+plt.semilogy(P[0],P[1],'--',color='forestgreen',label='Proceso: Dif \n Ajuste: Dif' )
+plt.semilogy(P[0],P[2],'b--',label='Proceso: Dif \n Ajuste: Bind' )
+plt.axvline(x=P[3],color='r')
+plt.text(P[3]+0.0008,0.0007,s='$S^2$ critico = {:.5f}'.format(P[3]), color='r',rotation=90)
 plt.xlabel('S2')
 plt.ylabel('p-valor')
+plt.legend()
 plt.show()
     
-                                                           
-                                                   
-#S2_critico = S2_critico - incremento
-#integral_Difusion_ajustado_Difusion = 1 - norm.cdf(S2_critico, mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)
-#integral_Difusion_ajustado_Binding = norm.cdf(S2_critico, mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)                                                            
-                                                    
-print(S2_critico,integral_Difusion_ajustado_Difusion,integral_Difusion_ajustado_Binding)                     
-                                                   
+
+#==============================================================================    
+#                               Proceso BINDING
+#                               Ajuste: Difusion y    BINDING
+#==============================================================================    
+plt.figure()
+plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[0],
+         Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[1],
+         '--',color='forestgreen', linewidth=3, 
+         label='Proceso: Bind \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         )
+
+plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[0],
+         Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[1],
+         'b--', linewidth=3, label='Proceso: Bind \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         )
 
 
+plt.legend()
+plt.show()
 
+P=p_valor(S2_binding_puro_ajustado_por_bind, mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO, 
+          S2_binding_puro_ajustado_por_dif, mu_ajuste_BindingPURO_por_Dif, sigma_ajuste_BindingPURO_por_Dif)
 
+plt.figure()
+plt.semilogy(P[0],P[1],'--',color='forestgreen',label='Proceso: Bind \n Ajuste: Bind' )
+plt.semilogy(P[0],P[2],'b--',label='Proceso: Bind \n Ajuste: Dif' )
+plt.axvline(x=P[3],color='r')
+plt.text(P[3]+0.0008,0.0007,s='$S^2$ critico = {:.5f}'.format(P[3]), color='r',rotation=90)
+plt.xlabel('S2')
+plt.ylabel('p-valor')
+plt.legend()
+plt.show()
 
-#print(norm.cdf(0.0205, mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif))   ###cdf(x, loc=0, scale=1) = (hasta donde quiero que integre desde -inf, mu, sigma)
 
 
 
