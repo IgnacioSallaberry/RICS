@@ -53,8 +53,10 @@ S2_w0_0_25_difusion = [float(i) for i in S2_w0_0_25_difusion]
 #==============================================================================
 #                                USANDO    SEABORN
 #==============================================================================   
-plt.figure()
 
+#                                BOXPLOTS JUNTOS
+#==============================================================================   
+plt.figure()
 colores_difusion=sns.color_palette("Blues")
 sns.set_style("white")
 X_Label = ['N en PSF = 0.05', 'N en PSF = 0.4', 'N en PSF = 3.18']
@@ -74,20 +76,12 @@ plt.show()
 
 
 
+#                                BOXPLOTS SEPARADOS
+#==============================================================================   
 
-
-f, (ax1, ax2, ax3) = plt.subplots(1,3)
+f, axes = f, (ax1, ax2, ax3) = plt.subplots(1,3, gridspec_kw={'wspace':0.35})
 colores_difusion=sns.color_palette("Blues")
 sns.set_style("white")
-
-
-ax1.set_xlabel('N en PSF = 0.05')
-ax2.set_xlabel('N en PSF = 0.4')
-ax3.set_xlabel('N en PSF = 3.18')
-
-ax1.set_ylabel('S2')
-ax2.set_ylabel('S2')
-ax3.set_ylabel('S2')
 
 sns.stripplot(data=S2_w0_0_25_difusion, ax=ax1, color='b')
 sns.stripplot(data=S2_w0_0_5_difusion, ax=ax2, color='g')
@@ -98,43 +92,32 @@ sns.boxplot(data=S2_w0_0_25_difusion, ax=ax1, color=colores_difusion[0])
 sns.boxplot(data=S2_w0_0_5_difusion,ax=ax2, color=colores_difusion[1])
 sns.boxplot(data=S2_w0_1_difusion,ax=ax3, color=colores_difusion[2])
 
+ax2.plot(0.0000502642,'m^', label='valor de S2 variando N', zorder=1)
+ax1.plot(0.0022476617,'m^', label='valor de S2 variando N', zorder=1)
 
 
 ax1.set_ylim([min(S2_w0_0_25_difusion)*0.1,max(S2_w0_0_25_difusion)*1.1])
 ax2.set_ylim([min(S2_w0_0_5_difusion)*0.1,max(S2_w0_0_5_difusion)*1.1])
 ax3.set_ylim([min(S2_w0_1_difusion)*0.1,max(S2_w0_1_difusion)*1.1])
 
-f.suptitle('DIFUSION \n', y=1)
-plt.tight_layout()
+ax1.set_ylabel('S2')
+
+ax1.set_xlabel('0.05')
+ax2.set_xlabel('0.4\nN en PSF')
+ax3.set_xlabel('3.18')
+
+ax1.legend(loc=1, bbox_to_anchor=(1, 1), bbox_transform=f.transFigure)    #bbox_transform=f.transFigure le está diciendo que la legenda la ubique usando la figura grande, y NO el subplot
+                                                                          #bbox_to_anchor=(1, 1) ubica en la posicion arriba a la derecha a la leyenda
+                                                                          #loc=1 se refiere a la esquina derecha superior DE LA LEYENDA! NO DE LA FIGURA. ie: para ubicar la leyenda en el bbox_to_anchor utiliza el punto de arriba a la derecha de la leyenda
+for ax in axes:
+    ax.set_xticks([])
+    ax.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+
+f.suptitle('DIFUSION \n')
 plt.show()
 
 
 
-
-#plt.figure()
-#w0_1_mediana = np.median(S2_w0_1_difusion)
-#W0_1_promedio = np.mean(S2_w0_1_difusion)
-#w0_1_moda = mode (S2_w0_1_difusion)
-#
-#plt.plot([3.18]*10,S2_w0_1_difusion,'r*',label='N = 3.18')
-#plt.ticklabel_format(useOffset=False)
-
-#plt.plot([0.39]*10,S2_w0_0_5_difusion,'g*',label='N = 0.39')
-#plt.plot([0.05]*10,S2_w0_0_25_difusion,'b*',label='N = 0.05')
-#plt.legend()
-#plt.show()
-
-
-#plt.figure()
-#labels = ['N = 3.18', 'N = 0.39', 'N = 0.05']
-#plt.boxplot(S2_w0_1_difusion, labels=labels[0])
-#plt.boxplot(S2_w0_0_5_difusion, labels=labels[1])
-#plt.boxplot(S2_w0_0_25_difusion, labels=labels[2])
-#
-##plt.boxplot(S2_w0_1_difusion, S2_w0_0_5_difusion, S2_w0_0_25_difusion, labels=labels)
-#
-#plt.tight_layout() #hace que no me corte los márgenes
-#plt.show()
 
 
 #==============================================================================
@@ -164,7 +147,8 @@ S2_w0_0_25_binding  = [float(i) for i in S2_w0_0_25_binding ]
 
 
 
-
+#                                BOXPLOTS JUNTOS
+#==============================================================================   
 plt.figure()
 colores_binding=sns.cubehelix_palette(8)
 sns.set_style("white")
@@ -174,30 +158,23 @@ ax.artists[0].set_facecolor(colores_binding[0])
 ax.artists[1].set_facecolor(colores_binding[1])
 ax.artists[2].set_facecolor(colores_binding[2])
 
-
-
 ax.get_xticklabels()
 ax.set_xticklabels(X_Label)
 plt.title('BINDING \n', y=1)
 plt.show()
 
-
-f, (ax1, ax2, ax3) = plt.subplots(1,3)
+#                                BOXPLOTS SEPARADOS
+#==============================================================================   
+f, axes = f, (ax1, ax2, ax3) = plt.subplots(1,3, gridspec_kw={'wspace':0.35})
 colores_binding=sns.cubehelix_palette(8)
 sns.set_style("white")
-
-
-ax1.set_xlabel('N en PSF = 0.05')
-ax2.set_xlabel('N en PSF = 0.4')
-ax3.set_xlabel('N en PSF = 3.18')
-
-ax1.set_ylabel('S2')
-ax2.set_ylabel('S2')
-ax3.set_ylabel('S2')
 
 sns.stripplot(data=S2_w0_0_25_binding, ax=ax1, color='b')
 sns.stripplot(data=S2_w0_0_5_binding, ax=ax2, color='g')
 sns.stripplot(data=S2_w0_1_binding, ax=ax3, color='r')
+
+ax2.plot(0.0000775362,'m^', label='valor de S2 variando N',markersize=15,zorder=1)
+ax1.plot(0.0052024122,'m^', label='valor de S2 variando N', zorder=1)
 
 
 sns.boxplot(data=S2_w0_0_25_binding, ax=ax1, color=colores_binding[0])
@@ -210,8 +187,19 @@ ax1.set_ylim([min(S2_w0_0_25_binding)*0.1,max(S2_w0_0_25_binding)*1.1])
 ax2.set_ylim([min(S2_w0_0_5_binding)*0.1,max(S2_w0_0_5_binding)*1.1])
 ax3.set_ylim([min(S2_w0_1_binding)*0.1,max(S2_w0_1_binding)*1.1])
 
+ax1.set_ylabel('S2')
+
+ax1.set_xlabel('0.05')
+ax2.set_xlabel('0.4\nN en PSF')
+ax3.set_xlabel('3.18')
+
+ax1.legend(loc=1, bbox_to_anchor=(1, 1), bbox_transform=f.transFigure) 
+
+for ax in axes:
+    ax.set_xticks([])
+    ax.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+
 f.suptitle('BINDING \n', y=1)
-plt.tight_layout()
 plt.show()
 
 
@@ -249,8 +237,8 @@ S_binding = [float(i) for i in S_binding]
 plt.figure()
 #fig.suptitle('S2 vs # de molec en PSF')
 #fig, axs = plt.subplots(2)
-plt.plot(N_difusion,S_difusion, 'b-*', label='S2 difusion')
-plt.plot(N_binding,S_binding, 'r-*', label='S2 binding')
+plt.semilogx(N_difusion,S_difusion, 'b-*', label='S2 difusion')
+plt.semilogx(N_binding,S_binding, 'r-*', label='S2 binding')
 
 plt.xlabel('molec en PSF')
 plt.ylabel('S2')
