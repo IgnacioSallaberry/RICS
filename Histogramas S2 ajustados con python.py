@@ -73,6 +73,7 @@ plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title 
+plt.rc('lines', linewidth=3)
 
 
 #==============================================================================
@@ -170,7 +171,7 @@ def Gaussiana(mu,sigma):
     return (x_gaussiana,gaussiana3)
 
 
-fig = plt.figure()
+fig = plt.figure(figsize=(11,10))
 bineado = 10
 #==============================================================================    
 #                               Proceso Binding
@@ -178,16 +179,16 @@ bineado = 10
 #==============================================================================    
 ax1 =fig.add_subplot(2,2,1)
 #bins_ajuste = np.arange(min(lista_S_2), max(lista_S_2)) # le pongo los bins a mano
-#ax1.set_xlabel('$S^2$')
-ax1.set_ylabel('Proceso:\n Binding \n')
-ax1.set_title('Ajuste:\n Binding')#, fontsize=20)
+ax1.set_xlabel('$S^2$')
+ax1.set_ylabel('Proceso:\n Asociacion-Disociación\n')
+ax1.set_title('Ajuste:\n Asociacion-Disociación')#, fontsize=20)
 n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_bind, bins=bineado, color='lightsalmon', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
 
 plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[0],
          Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[1],
-         'r--', linewidth=3, 
-         label='Proceso: Bind \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
+         '--', color='tomato',
+         label='Proceso: Asociacion-Disociación \n Ajuste: Asociacion-Disociación \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
          )
 
 plt.legend()
@@ -197,16 +198,15 @@ plt.legend()
 #==============================================================================    
 ax1 =fig.add_subplot(2,2,2)
 #bins_ajuste = np.arange(min(lista_S_2), max(lista_S_2)) # le pongo los bins a mano
-#ax1.set_xlabel('$S^2$')
-ax1.set_ylabel('Proceso:\n Binding \n')
+ax1.set_xlabel('$S^2$')
+ax1.set_ylabel('Proceso:\n Asociacion-Disociación \n')
 ax1.set_title('Ajuste:\n Difusion')#, fontsize=20)
 n,bin_positions_ajuste,p  = plt.hist(S2_binding_puro_ajustado_por_dif, bins=bineado, color='indianred', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
 
 plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[0],
          Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[1],
-         '--',color='#8f1402', linewidth=3, 
-         label='Proceso: Bind \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
+         '--',color='#8f1402', label='Proceso: Asociacion-Disociación \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
          )
 
 plt.legend()
@@ -216,16 +216,15 @@ plt.legend()
 #==============================================================================    
 ax1 =fig.add_subplot(2,2,3)
 #bins_ajuste = np.arange(min(lista_S_2), max(lista_S_2)) # le pongo los bins a mano
-#ax1.set_xlabel('$S^2$')
+ax1.set_xlabel('$S^2$')
 ax1.set_ylabel('Proceso:\n Difusion \n')
-ax1.set_title('Ajuste:\n Binding')#, fontsize=20)
+ax1.set_title('Ajuste:\n Asociacion-Disociación')#, fontsize=20)
 n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_bind, bins=bineado, color='C0', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
 bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el ancho de los bins del histograma
 
 plt.plot(Gaussiana(mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)[0],
          Gaussiana(mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)[1],
-         'b--', linewidth=3, 
-         label='Proceso: Dif \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)
+         'b--', label='Proceso: Dif \n Ajuste: Asociacion-Disociación \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)
          )
 
 plt.legend()
@@ -234,6 +233,7 @@ plt.legend()
 #                               Ajuste: Difusion
 #==============================================================================    
 ax1 =fig.add_subplot(2,2,4)
+ax1.set_xlabel('$S^2$')
 ax1.set_ylabel('Proceso:\n Difusion \n')
 ax1.set_title('Ajuste:\n Difusion')#, fontsize=20)
 n,bin_positions_ajuste,p  = plt.hist(S2_dif_ajustado_por_dif, bins=bineado, color='mediumaquamarine', normed=True)    #esta funcion, ademas de graficar devuelve parametros del histograma, que guardamos en las variables n,bin_positions,p
@@ -241,12 +241,12 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
          Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[1],
-         '--',color='forestgreen', linewidth=3, 
-         label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         '--',color='forestgreen', label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
          )
 
 plt.legend()
 plt.gcf().subplots_adjust(bottom=0.15)
+plt.tight_layout()
 plt.show()
 
 
@@ -307,10 +307,11 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[0],
          Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[1],
-         '--',color='#8f1402', linewidth=3, 
-         label='Proceso: Bind \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         '--',color='#8f1402', label='Proceso: Asociacion-Disociación \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
          )
 
+plt.xlabel(r'$S^2$')
+plt.ylabel('Frecuencia')
 plt.legend()
 
 
@@ -323,10 +324,12 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[0],
          Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[1],
-         'r--', linewidth=3, 
-         label='Proceso: Bind \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
+         '--', color='tomato',
+         label='Proceso: Asociacion-Disociación \n Ajuste: Asociacion-Disociación \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
          )
 
+plt.xlabel(r'$S^2$')
+plt.ylabel('Frecuencia')
 plt.legend()
 plt.show()
 
@@ -344,10 +347,10 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
          Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[1],
-         '--',color='forestgreen', linewidth=3, 
-         label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         '--',color='forestgreen', label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
          )
-
+plt.xlabel(r'$S^2$')
+plt.ylabel('Frecuencia')
 plt.legend()
 
 
@@ -360,10 +363,12 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[0],
          Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)[1],
-         'r--', linewidth=3, 
-         label='Proceso: Bind \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
+         '--', color='tomato',
+         label='Proceso: Asociacion-Disociación \n Ajuste: Asociacion-Disociación \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
          )
 
+plt.xlabel(r'$S^2$')
+plt.ylabel('Frecuencia')
 plt.legend()
 plt.show()
 
@@ -382,8 +387,7 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)[0],
          Gaussiana(mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)[1],
-         'b--', linewidth=3, 
-         label='Proceso: Dif \n Ajuste: Bind \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)
+         'b--', label='Proceso: Dif \n Ajuste: Asociacion-Disociación \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)
          )
 
 plt.legend()
@@ -396,19 +400,14 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
          Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[1],
-         '--',color='forestgreen', linewidth=3, 
-         label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         '--',color='forestgreen', label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
          )
 
+plt.xlabel(r'$S^2$')
+plt.ylabel('Frecuencia')
 plt.legend()
 plt.gcf().subplots_adjust(bottom=0.15)
 plt.show()
-
-
-
-
-
-
 
 
 
@@ -424,10 +423,11 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[0],
          Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[1],
-         '--',color='#8f1402', linewidth=3, 
-         label='Proceso: Bind \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         '--',color='#8f1402', label='Proceso: Asociacion-Disociación \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
          )
 
+plt.xlabel(r'$S^2$')
+plt.ylabel('Frecuencia')
 plt.legend()
 
 #==============================================================================    
@@ -439,10 +439,11 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
          Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[1],
-         '--',color='forestgreen', linewidth=3, 
-         label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         '--',color='forestgreen', label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
          )
 
+plt.xlabel(r'$S^2$')
+plt.ylabel('Frecuencia')
 plt.legend()
 plt.gcf().subplots_adjust(bottom=0.15)
 plt.show()
@@ -450,30 +451,3 @@ plt.show()
 
 
 
-
-
-
-
-
-#==============================================================================
-#                           #####     p-valor Critico      #####
-#                                   Binding ajustado por dos modelos
-#==============================================================================   
-#S2_critico = mu_ajuste_Dif_por_Dif
-#
-#integral_Binding_ajustado_Difusion = 1 - norm.cdf(S2_critico, mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)
-#integral_Binding_ajustado_Binding = norm.cdf(S2_critico, mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)                                                            
-#     
-#incremento = 0.0001
-#
-#                                                 
-#while integral_Difusion_ajustado_Difusion > integral_Difusion_ajustado_Binding:
-#    S2_critico += incremento                                             
-#    integral_Difusion_ajustado_Difusion = 1 - norm.cdf(S2_critico, mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)
-#    integral_Difusion_ajustado_Binding = norm.cdf(S2_critico, mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind) 
-#                                                   
-#S2_critico = S2_critico - incremento
-#integral_Binding_ajustado_Difusion= 1 - norm.cdf(S2_critico, mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)
-#integral_Binding_ajustado_Binding = norm.cdf(S2_critico, mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPURO_por_BindingPURO)                                                            
-#                                                    
-#print('S2_critico = {} \n p-valor dif ajustado por difusion = {} \n p-valor dif ajustado por binding = {}'.format(S2_critico,integral_Binding_ajustado_Difusion,integral_Binding_ajustado_Binding))
