@@ -44,6 +44,8 @@ Ab= 0.9                #Amplitud de binding
 
 D=90
 #print('D = {}'.format(D))
+t_diff = w0**2/(4*D)    
+print(f'tiempo de difusion = {t_diff} segundos')
 #D=90
 #D=[0.1,1,10,100,1000]
 #D=np.arange(1,1050,200)   #micrones^2/seg
@@ -64,29 +66,27 @@ D=90
 
 
 #defino tau
-#tau = np.logspace(0, 1, num=1000)/100000000
+#tau = np.logspace(0, 8, num=1000)/10000000
+#tau = np.geomspace(tp, tp*box_size**2)
+#tau = np.linspace(1,1e7,num=1000000)/1000000
 tau = np.geomspace(1e-6,10,num=1000)
-#tau = np.linspace(1,10, num=100000)/1000000
+
 #==============================================================================
 #                                Defino tiempo de difusión de acuerdo a los parametros de arriba
 #==============================================================================    
 
-t_diff = w0**2/(4*D) 
-print('tiempo de difusion = {} segundos'.format(t_diff))
+#t_diff = w0**2/(4*D) 
+#print(f'tiempo de difusion = {t_diff} segundos')
 
-
-t_binding=0.5
 #==============================================================================
 #                                Inicializo T= t_diff / t_bind 
 #==============================================================================    
-#T=[0.01,0.1,1,10,100]
-#T=[0.01,0.9,100]
-#T=[0.25,1.75]
-#T=[0.09]
-T=[t_diff/t_binding]
-print(T)
+#T=[0.01,1,100]
+#T=[0.01,1,30]
+#T=[30]
+T=[1]
 
-#t_binding=t_diff/T
+t_binding=0.5
 
 
 
@@ -95,40 +95,33 @@ print(T)
 #==============================================================================    
 
 #Ruido = np.random.randn(len(tau),1)
+i=0
+ruido1 = []
+ruido2 = []
+ruido3 = []
 
-ruido1 = np.random.uniform(0,0.25, size=len(tau))
-ruido2 = np.random.uniform(0,0.25, size=len(tau))
-ruido3 = np.random.uniform(0,0.25, size=len(tau))
-plt.figure()
-plt.plot(ruido1, label='ruido1')
-plt.plot(ruido2, label='ruido2')
-plt.plot(ruido3, label='ruido3')
-#plt.plot(tau1, label='tau1')
-plt.legend()
-plt.show()
+#ruido = np.arange()
+for i in tau:
 
+    ruido1.append(np.random.uniform(0,1)-np.random.uniform(0,1))
+    ruido2.append(np.random.uniform(0,1)-np.random.uniform(0,1))
+    ruido3.append(np.random.uniform(0,1)-np.random.uniform(0,1))
 
+numero_random_para_modular=np.arange(0,1,0.001)
+modulacion1=[]
+modulacion2=[]
+modulacion3=[]
 
-#numero_random_para_modular = np.linspace(0, 1, len(ruido1))
-#numero_random_para_modular=np.arange(0,1,0.001)
-numero_random_para_modular=np.random.uniform(-1,1)
-#modulacion1 = ruido1 * np.exp((numero_random_para_modular * tau**(0.5)))
-#modulacion1 = np.exp(numero_random_para_modular * tau) * ruido1
-#modulacion2 = np.exp(numero_random_para_modular * tau) * ruido2
-#modulacion3 = np.exp(numero_random_para_modular * tau) * ruido3
-
-modulacion1 = ruido1
-modulacion2 = ruido2
-modulacion3 = ruido3
-
-
-
+i=0
+#while i<len(ruido1):
+#    modulacion1.append(np.exp(-numero_random_para_modular[i])*ruido1[i])
+#    modulacion2.append(np.exp(-numero_random_para_modular[i])*ruido2[i])
+#    modulacion3.append(np.exp(-numero_random_para_modular[i])*ruido3[i])
+#    i+=1
 
 s=1000
 plt.figure()
-plt.plot(modulacion1, label='modulacion 1')
-plt.plot(modulacion2, label='modulacion 2')
-plt.plot(modulacion3, label='modulacion 3')
+plt.plot(modulacion1, label='modulacion')
 #plt.plot(tau1, label='tau1')
 plt.legend()
 plt.show()
@@ -140,10 +133,9 @@ plt.show()
 #==============================================================================
 #                                Tipografía de los gráficos
 #==============================================================================    
-SMALL_SIZE = 30
+SMALL_SIZE = 28
 MEDIUM_SIZE = 36
 BIGGER_SIZE = 39
-
 plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
 plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
@@ -160,7 +152,7 @@ fig = plt.figure()
 plt.close('all') # amtes de graficar, cierro todos las figuras que estén abiertas
     
 guardar_imagenes = False    
-i=0
+
 for t in T:
     if t==T[0]:
         ruido=ruido1
@@ -172,10 +164,9 @@ for t in T:
         ruido=ruido3
         modulacion = modulacion3
     
-
-
-    print(f'tiempo de binding= {t_binding} segundos')
-
+#    t_binding=t_diff/t
+#    print(f'tiempo de binding= {t_binding} segundos')
+    t_triplet=t_diff/t
 #    if d==D[-1]:
 #        guardar_imagenes = True
 #    else:
@@ -192,8 +183,7 @@ for t in T:
     ###termino de triplete
     G_triplet = 1+ At * np.exp(-tau/t_triplet)
     ###termino de binding
-    G_bind =Ab * np.exp(-tau*t/(t_diff))
-#    G_bind =Ab * np.exp(-tau/t_binding)
+    G_bind =Ab * np.exp(-tau/t_binding)
 
 
     ####   Esto es para usar la version de la tesis de Laura.
@@ -218,87 +208,67 @@ for t in T:
 #==============================================================================
 #                                Ruido para las señales
 #==============================================================================    
-    Gtotal_ruido = Gtotal + Gtotal**(0.25) * modulacion3
-    Gtotal_ruido_normalizada = Gtotal_ruido/max(Gtotal_ruido) 
-    G_diff_ruido = (G_diff + G_diff**(0.25) * modulacion1)
-    G_diff_ruido_normalizada = G_diff_ruido/max(G_diff_ruido)
-    G_bind_ruido = (G_bind + G_bind**(0.25) * modulacion2)
-    G_bind_ruido_normalizada = G_bind_ruido/max(G_bind_ruido)
-
-#    G_diff_ruido = (G_diff_moño + G_diff_moño * modulacion)
-#    G_diff_ruido_normalizada = G_diff_ruido/max(G_diff_ruido)
-#    G_bind_ruido = (G_bind_moño  + G_bind_moño  * modulacion)
-#    G_bind_ruido_normalizada = G_bind_ruido/max(G_bind_ruido)
-
-
-
-
-    ###  Grafico funcion de correlación  total  CON RUIDO
-    plt.figure(i)
-#    plt.semilogx(tau, Gtotal_ruido_normalizada,'-',label=r'$G(\tau) - t\_bind={} - t\_dif={}$'.format(t, '%.2E' % t_binding, '%.2E' % t_diff),linewidth=2) 
-#    plt.semilogx(tau, (G_bind + G_bind * modulacion)/max(G_bind),'-',label=f'T={t} - BINDING')    
-    plt.semilogx(tau, Gtotal_ruido_normalizada,'-',label=f'difusión y asoc-disoc', linewidth=3)
-    plt.semilogx(tau, G_diff_ruido_normalizada,'-',label='difusión', linewidth=3)
-    plt.semilogx(tau, G_bind_ruido_normalizada,'-',label=r'asoc-disoc', linewidth=3)
-
-
-    plt.legend(loc=3)
-    plt.xlabel(r'$\tau$ - ($s$)')
-    plt.ylabel(r'G($\tau$)')
-#    plt.tick_params(direction='out', length=6, width=2, colors='r', grid_color='r', grid_alpha=0.5)
-    plt.tick_params(which='minor', length=2, width=1.5)
-    plt.tick_params(which='major', length=4, width=2)
-    plt.show()
-#    plt.tight_layout() #hace que no me corte los márgenes
-    
-    if guardar_imagenes:
-        plt.savefig('C:\\Users\\LEC\\Desktop')
-    i+=1
-    
-    
-    
-    
-    plt.figure(i)
-#    plt.semilogx(tau, Gtotal_ruido_normalizada,'-',label=r'$G(\tau) - t\_bind={} - t\_dif={}$'.format(t, '%.2E' % t_binding, '%.2E' % t_diff),linewidth=2) 
-    
-    plt.semilogx(tau, Gtotal_normalizada,'-',label=f'difusión y asoc-disoc',linewidth=3)
-    plt.semilogx(tau, G_diff/max(G_diff),'-',label='difusión',linewidth=3)
-    plt.semilogx(tau, G_bind/max(G_bind),'-',label=r'asoc-disoc',linewidth=3)
-
-    plt.legend(loc='lower left')
-    plt.xlabel(r'$\tau$ - ($s$)')
-    plt.ylabel(r'G($\tau$)')
-    plt.tick_params(which='minor', length=2, width=1.5)
-    plt.tick_params(which='major', length=4, width=2)
-    plt.show()
-#    plt.tight_layout() #hace que no me corte los márgenes
-    
-    if guardar_imagenes:
-        plt.savefig('C:\\Users\\LEC\\Desktop')
-    i+=1
-    
-#    plt.semilogx(tau, G_diff/max(G_diff),'-',label='difusión',linewidth=3)
-#
+#    Gtotal_ruido = Gtotal  + modulacion
+#    Gtotal_ruido_normalizada = Gtotal_ruido/max(Gtotal_ruido)
+#    
+   
+#    ###  Grafico solo termino difussivo
+#    plt.figure(i)
+##    plt.plot((dr*x), G_norm,'-.',label=f'D={d}',linewidth=1)
+#    plt.semilogx(tau, G_diff_norm,'-.',label=f'T={t} \n tb={t_binding}, td={t_diff}')
 #    plt.legend()
-#    plt.xlabel(r'$\tau$ ($s$)')
-##    plt.ylabel(r'Gtot($\tau$) DIFUSION')
-##    plt.title('tp = {}$\mu$s - pix size = {} $\mu$m \n box size = {} pix - D={}'.format(tp*1e6,dr,box_size,D))
-##    plt.title('H-line  G total')
+#    plt.xlabel(r'$\tau$ - ($s$)',fontsize=14)
+#    plt.ylabel(r'Gdiff($\tau$)',fontsize=14)
+##    plt.title('H-line G diff  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
+#    plt.title('H-line G diff')
 #    plt.show()
 #    plt.tight_layout() #hace que no me corte los márgenes
 #    
 #    if guardar_imagenes:
 #        plt.savefig('C:\\Users\\LEC\\Desktop')
-#  
+#    i+=1
 #
-##    plt.plot((dr*x), Gtotal_normalizada,'-.',label=f'D={d}',linewidth=1)
-##    plt.semilogx(tau, G_bind/max(G_bind),'-',label='G binding - tb={} '.format('%.2E' % t_binding),linewidth=2)
-#    plt.semilogx(tau, G_bind/max(G_bind),'-',label=r'asoc-disoc',linewidth=3)
 #
+#    ###  Grafico solo termino triplete
+#    plt.figure(i)
+##    plt.plot((dr*x), G_norm,'-.',label=f'D={d}',linewidth=1)
+#    plt.semilogx(tau, G_triplet_norm,'-.',label=f'T={t} \n tb={t_binding}, td={t_diff}')
+#    plt.legend()
+#    plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
+#    plt.ylabel(r'Gtriplet($\xi$)',fontsize=14)
+##    plt.title('H-line G diff  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
+#    plt.title('H-line G triplete')
+#    plt.show()
+#    plt.tight_layout() #hace que no me corte los márgenes
+#    
+#    if guardar_imagenes:
+#        plt.savefig('C:\\Users\\LEC\\Desktop')
+#    i+=1
+#    
+#    
+#    ###  Grafico solo termino binding
+#    plt.figure(i)
+##    plt.plot((dr*x), G_norm,'-.',label=f'D={d}',linewidth=1)
+#    plt.semilogx(tau, G_bind_norm,'-.',label=f'T={t} \n tb={t_binding}, td={t_diff}')
+#    plt.legend()
+#    plt.xlabel(r'$\tau$ - ($s$)',fontsize=14)
+#    plt.ylabel(r'Gbind($\tau$)',fontsize=14)
+##    plt.title('H-line G diff  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
+#    plt.title('H-line G binding')
+#    plt.show()
+#    plt.tight_layout() #hace que no me corte los márgenes
+#    
+#    if guardar_imagenes:
+#        plt.savefig('C:\\Users\\LEC\\Desktop')
+#    i+=1
+#    
+    ###  Grafico funcion de correlación  total  CON RUIDO
+#    plt.figure(i)
+#    plt.semilogx(tau, Gtotal_ruido_normalizada,'-',label=f'T={t} \n tb={t_binding}, td={t_diff}')
 #    plt.legend()
 #    plt.xlabel(r'$\tau$ - ($s$)')
-##    plt.ylabel(r'Gtot($\tau$)')
-##    plt.title('tp = {}$\mu$s - pix size = {} $\mu$m \n box size = {} pix - D={}'.format(tp*1e6,dr,box_size,D))
+#    plt.ylabel(r'Gtot($\tau$)')
+#    plt.title('tp = {}$\mu$s  - pix size = {} $\mu$m- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
 ##    plt.title('H-line  G total')
 #    plt.show()
 #    plt.tight_layout() #hace que no me corte los márgenes
@@ -307,15 +277,50 @@ for t in T:
 #        plt.savefig('C:\\Users\\LEC\\Desktop')
 #    i+=1
     
+#    ##  Grafico funcion de correlación  total
+#    plt.figure(i)
+##    plt.plot((dr*x), Gtotal_normalizada,'-.',label=f'D={d}',linewidth=1)
+#    plt.semilogx(tau, Gtotal,'-',label='T={} \n t bind={} \n t dif={}'.format(t,'%.2E' % t_binding,'%.2E' % t_diff))
+#    plt.legend()
+#    plt.xlabel(r'$\tau$ - ($s$)')
+#    plt.ylabel(r'Gtot($\tau$)')
+#    plt.title('tp = {}$\mu$s - pix size = {} $\mu$m \n box size = {} pix - D={}'.format(tp*1e6,dr,box_size,D))
+##    plt.title('H-line  G total')
+#    plt.show()
+#    plt.tight_layout() #hace que no me corte los márgenes
+#    
+#    if guardar_imagenes:
+#        plt.savefig('C:\\Users\\LEC\\Desktop')
+#    i+=1
+  
+  
+    ##  Grafico funcion de correlación  total
+    plt.figure(i)
+#    plt.plot((dr*x), Gtotal_normalizada,'-.',label=f'D={d}',linewidth=1)
+#    plt.semilogx(tau, Gtotal_normalizada,'-',label='Gtot \n tb={} \n td={}'.format('%.2E' % t_binding,'%.2E' % t_diff),linewidth=2)
+    plt.semilogx(tau, Gtotal_normalizada,'-',label='difusión y asoc-disoc',linewidth=3)
+    plt.semilogx(tau, G_diff/max(G_diff),'-',label='difusión',linewidth=3)
+    plt.semilogx(tau, G_bind/max(G_bind),'-',label=r'asoc-disoc',linewidth=3)
+    plt.legend()
+    plt.xlabel(r'$\tau$ - ($s$)')
+    plt.ylabel(r'G($\tau$)')
+    plt.tight_layout() #hace que no me corte los márgenes
+    plt.tick_params(which='minor', length=2, width=1.5)
+    plt.tick_params(which='major', length=4, width=2)
+    plt.show()    
+    if guardar_imagenes:
+        plt.savefig('C:\\Users\\LEC\\Desktop')
+    i+=1
 
-    ###  Grafico funcion de correlación  total
+
+#    ##  Grafico funcion de correlación  total
 #    plt.figure(i)
 ##    plt.plot((dr*x), Gtotal_normalizada,'-.',label=f'D={d}',linewidth=1)
 #    plt.semilogx(tau, Gtotal_normalizada,'-',label=f'T={t} \n tb={t_binding}, td={t_diff}')
 #    plt.semilogx(tau, G_diff_moño/max(G_bind_moño),'k')
 #    plt.legend()
-#    plt.xlabel(r'$\tau$ - ($s$)',fontsize=14)
-#    plt.ylabel(r'Gtot($\tau$)',fontsize=14)
+#    plt.xlabel(r'$\tau$ - ($s$)')
+#    plt.ylabel(r'Gtot($\tau$)')
 #    plt.title('G$(\tau) \_total$ \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
 ##    plt.title('H-line  G total')
 #    plt.show()
