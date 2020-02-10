@@ -24,8 +24,8 @@ import matplotlib.ticker as mticker
 #==============================================================================
 # CARGO LOS DATOS DE LAS 100 SIMULACIONES DE DIFUSIÓN DEL 5-4-19 Y CALCULO EL S2 USANDO ESTADÍSTICO A MANO
 #==============================================================================
-
-with open('C:\\Users\\ETCasa\\Desktop\\Analisis datos manu 23 hs gfp\\23hs_cell4_rics_cyto_DIFFERENCE_DIFUSION.txt') as fobj:
+#23hs_cell4_rics_cyto_DIFFERENCE_DIFUSION
+with open('D:\\Nacho Sallaberry - Next Cloud\\Datos manu\\ANALISIS DATOS MANU 6HS DENV CELULA1 RICS NUCLEO\\DIFFERENCE DIFUSION 6HS DENV CELULA1 RICS NUCLEO.txt') as fobj:
     datos_difusion = fobj.read()
 datos_difusion = re.split('\t|\n', datos_difusion)
 datos_difusion.remove('X')
@@ -36,7 +36,7 @@ datos_difusion.remove('')
     
 
 
-with open('C:\\Users\\ETCasa\\Desktop\\Analisis datos manu 23 hs gfp\\23hs_cell4_rics_cyto_DIFFERENCE_BINDING.txt') as fobj:
+with open('D:\\Nacho Sallaberry - Next Cloud\\Datos manu\\ANALISIS DATOS MANU 6HS DENV CELULA1 RICS NUCLEO\\DIFFERENCE BINDING 6HS DENV CELULA1 RICS NUCLEO.txt') as fobj:
     datos_binding= fobj.read()
 datos_binding= re.split('\t|\n', datos_binding)
 datos_binding.remove('X')
@@ -83,21 +83,16 @@ std_err_ajuste_Bind = sigma_ajuste_Bind / N_ajuste_Bind # error estándar
 # PARAMETROS DE TAMAÑAO DE LETRA DE LOS GRAFICOS
 #==============================================================================
 plt.close('all') # amtes de graficar, cierro todos las figuras que estén abiertas
-
-SMALL_SIZE = 22
-MEDIUM_SIZE = 26
-BIGGER_SIZE = 32
-
+SMALL_SIZE = 28
+MEDIUM_SIZE = 36
+BIGGER_SIZE = 39
 plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
 plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title    
-plt.rc('lines', linewidth=3)
-
-plt.tick_params(labelsize=MEDIUM_SIZE)
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=22)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 
 def Gaussiana(mu,sigma):
@@ -111,8 +106,8 @@ def Gaussiana(mu,sigma):
     return (x_gaussiana,gaussiana3)
 
 
-bineado = 10
-
+#bineado = 'fd'
+bineado = 50
 ##==============================================================================    
 ##                               Diferencias ajuste por Difusion
 ##==============================================================================    
@@ -124,10 +119,12 @@ plt.plot(Gaussiana(mu_ajuste_Diff,sigma_ajuste_Diff)[0],
          '--', color='tomato', label='Ajuste: Difusión \n $\mu$= {:10.3E} $\\sigma$ = {:10.3E}'.format(mu_ajuste_Diff, sigma_ajuste_Diff)
 
          )
-plt.errorbar(0.5*(bin_positions_ajuste[1:]+bin_positions_ajuste[:-1]), n, yerr=np.sqrt(n),
-             fmt='None', ecolor='r', elinewidth=3, capthick=10)
+#plt.errorbar(0.5*(bin_positions_ajuste[1:]+bin_positions_ajuste[:-1]), n, yerr=np.sqrt(n),
+#             fmt='None', ecolor='r', elinewidth=3, capthick=10)
 #plt.bar(bin_positions_ajuste,n, yerror=np.sqrt(n))#, alpha=0.5, ecolor='black', capsize=10)
 plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+plt.tick_params(which='minor', length=4, width=1.5)
+plt.tick_params(which='major', length=7, width=2)
 
 ##==============================================================================    
 ##                               Diferencias ajuse por Binding
@@ -140,11 +137,13 @@ plt.plot(Gaussiana(mu_ajuste_Bind,sigma_ajuste_Bind)[0],
          '--',color='forestgreen', label= 'Ajuste: Asociacion-Disociación \n $\mu$= {:10.3E} $\\sigma$ = {:10.3E}'.format(mu_ajuste_Bind, sigma_ajuste_Bind)
          )
 plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-plt.errorbar(0.5*(bin_positions_ajuste[1:]+bin_positions_ajuste[:-1]), n,  yerr=np.sqrt(n), fmt='None', ecolor='b', elinewidth=3)
+#plt.errorbar(0.5*(bin_positions_ajuste[1:]+bin_positions_ajuste[:-1]), n,  yerr=np.sqrt(n), fmt='None', ecolor='b', elinewidth=3)
 plt.xlabel(r'$Datos - Ajuste$')
 plt.ylabel('')
 plt.legend()
 plt.title('Histograma normalizado')
+plt.tick_params(which='minor', length=4, width=1.5)
+plt.tick_params(which='major', length=7, width=2)
 plt.show()
 plt.tight_layout()
 #plt.savefig('C:\\Users\\ETCasa\\Desktop\\Histogramas datos manu')
