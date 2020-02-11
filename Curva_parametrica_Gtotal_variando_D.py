@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Apr  9 20:25:06 2019
-
 @author: ETCasa
 """
 
@@ -27,7 +26,7 @@ D=[0.1,1,10,100,1000]
 x0 = (box_size)/2  #seda inicial
 xf = (box_size + roi)/2  #seda final
 #xf=640
-x=np.arange(1,xf-x0)
+x=np.arange(1,xf-x0,0.1)
 
 y = 0  #miro solo la componente H orizontal
 
@@ -35,10 +34,23 @@ y = 0  #miro solo la componente H orizontal
 #tp=tl
 
 
-###------------------------------------------------GRAFICO EN 2D
-###termino de scanning
+#==============================================================================
+#                                Tipografía de los gráficos
+#==============================================================================      
+SMALL_SIZE = 30
+MEDIUM_SIZE = 36
+BIGGER_SIZE = 39
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
+
 fig = plt.figure()
-#ax = plt.axes(projection='3d')
 
     
 plt.close('all') # amtes de graficar, cierro todos las figuras que estén abiertas
@@ -49,20 +61,8 @@ for d in D:
 #        guardar_imagenes = True
 #    else:
 #        guardar_imagenes = False
-#    
-    SMALL_SIZE = 14
-    MEDIUM_SIZE = 16
-    BIGGER_SIZE = 18
-    
-    plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
-    plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
-    plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
-    plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-    plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-    plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
-    plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
-    
-    
+#
+
 #==============================================================================
 #                                  H - Line
 #==============================================================================    
@@ -81,44 +81,50 @@ for d in D:
     
     
     ###  Grafico solo termino difussivo
-    plt.figure(1)
-#    plt.plot((dr*x), G_norm,'-.',label=f'D={d}',linewidth=1)
-    plt.semilogx((dr*x), G_norm,'-.',label=f'D={d}')
-    plt.legend()
-    plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
-    plt.ylabel(r'Gdiff($\xi$)',fontsize=14)
-#    plt.title('H-line G diff  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
-    plt.title('H-line G diff')
-    plt.show()
-    plt.tight_layout() #hace que no me corte los márgenes
-    
-    if guardar_imagenes:
-        plt.savefig('C:\\Users\\LEC\\Desktop\\Poster TOPFOT 2019\\H_Line_Diff')
-    
-    ###  Grafico solo termino Scanning
-    plt.figure(2)
-#    plt.plot((dr*x), S_norm,'-.',label=f'D={d}',linewidth=1)
-    plt.semilogx((dr*x), S_norm,'-.',label=f'D={d}')
-    plt.legend()
-    plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
-    plt.ylabel(r'Scanning($\xi$)',fontsize=14)
-#    plt.title('H-line  SCANNING  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
-    plt.title('H-line  SCANNING')
-    plt.show()
-    plt.tight_layout() #hace que no me corte los márgenes
-    
-    if guardar_imagenes:
-        plt.savefig('C:\\Users\\LEC\\Desktop\\Poster TOPFOT 2019\\H_Line_Scanning')
+#    plt.figure(1)
+##    plt.plot((dr*x), G_norm,'-.',label=f'D={d}',linewidth=1)
+#    plt.semilogx((dr*x), G_norm,'-.',label=f'D={d}')
+#    plt.legend()
+#    plt.xlabel(r'pixel shift $\xi$ - $\mu m$')
+#    plt.ylabel(r'Gdiff($\xi$)')
+##    plt.title('H-line G diff  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size))
+#    plt.title('H-line G diff')
+#    plt.tick_params(which='minor', length=2, width=1.5)
+#    plt.tick_params(which='major', length=4, width=2)
+#    plt.show()
+#    plt.tight_layout() #hace que no me corte los márgenes
+#    
+#    if guardar_imagenes:
+#        plt.savefig('C:\\Users\\LEC\\Desktop\\Poster TOPFOT 2019\\H_Line_Diff')
+#    
+#    ###  Grafico solo termino Scanning
+#    plt.figure(2)
+##    plt.plot((dr*x), S_norm,'-.',label=f'D={d}',linewidth=1)
+#    plt.semilogx((dr*x), S_norm,'-.',label=f'D={d}')
+#    plt.legend()
+#    plt.xlabel(r'pixel shift $\xi$ - $\mu m$')
+#    plt.ylabel(r'Scanning($\xi$)')
+##    plt.title('H-line  SCANNING  \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size))
+#    plt.title('H-line  SCANNING')
+#    plt.tick_params(which='minor', length=2, width=1.5)
+#    plt.tick_params(which='major', length=4, width=2)
+#    plt.show()
+#    plt.tight_layout() #hace que no me corte los márgenes
+#    
+#    if guardar_imagenes:
+#        plt.savefig('C:\\Users\\LEC\\Desktop\\Poster TOPFOT 2019\\H_Line_Scanning')
         
     ###  Grafico funcion de correlación  total
     plt.figure(3)
 #    plt.plot((dr*x), Gtotal_normalizada,'-.',label=f'D={d}',linewidth=1)
     plt.semilogx((dr*x), Gtotal_normalizada,'-.',label=f'D={d}')
     plt.legend()
-    plt.xlabel(r'pixel shift $\xi$ - $\mu m$',fontsize=14)
-    plt.ylabel(r'Gtot($\xi$)',fontsize=14)
-    plt.title('H-line G total \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size),fontsize=18)
+    plt.xlabel(r'pixel shift $\xi$ - $\mu m$')
+    plt.ylabel(r'Gtot($\xi$)')
+    plt.title('H-line G total \n tp = {}$\mu$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e6,dr,box_size))
     plt.title('H-line  G total')
+    plt.tick_params(which='minor', length=2, width=1.5)
+    plt.tick_params(which='major', length=4, width=2)
     plt.show()
     plt.tight_layout() #hace que no me corte los márgenes
     
@@ -149,47 +155,53 @@ for d in D:
     G_norm = G/max(G)
 
     
-    ###  Grafico solo termino difussivo
-    plt.figure(4)
-#    plt.plot((dr*x), G_norm,'-.',label=f'D={d}')
-    plt.semilogx((dr*x), G_norm,'-.',label=f'D={d}')
-    plt.legend()
-    plt.xlabel(r'pixel shift $\psi$ - $\mu m$',fontsize=14)
-    plt.ylabel(r'Gdiff($\psi$)',fontsize=14)
-#    plt.title('V-line G diff  \n tl = {}$ms$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e3,dr,box_size),fontsize=18)
-    plt.title('V-line G diff',fontsize=18)
-    plt.show()
-    plt.tight_layout() #hace que no me corte los márgenes
-    
-    if guardar_imagenes:
-        plt.savefig('C:\\Users\\LEC\\Desktop\\Poster TOPFOT 2019\\V_Line_Diff')
-    
-    
-    ###  Grafico solo termino Scanning
-    plt.figure(5)
-#    plt.plot((dr*x), S_norm,'-.',label=f'D={d}')
-    plt.semilogx((dr*x), S_norm,'-.',label=f'D={d}')
-    plt.legend()
-    plt.xlabel(r'pixel shift $\psi$ - $\mu m$',fontsize=14)
-    plt.ylabel(r'Scanning($\psi$)',fontsize=14)
-#    plt.title('V-line  SCANNING  \n tl = {}$ms$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e3,dr,box_size),fontsize=18)
-    plt.title('V-line  SCANNING')
-    plt.show()
-    plt.tight_layout() #hace que no me corte los márgenes
-    
-    if guardar_imagenes:
-        plt.savefig('C:\\Users\\LEC\\Desktop\\Poster TOPFOT 2019\\V_Line_Scanning')
-    
+#    ###  Grafico solo termino difussivo
+#    plt.figure(4)
+##    plt.plot((dr*x), G_norm,'-.',label=f'D={d}')
+#    plt.semilogx((dr*x), G_norm,'-.',label=f'D={d}')
+#    plt.legend()
+#    plt.xlabel(r'pixel shift $\psi$ - $\mu m$')
+#    plt.ylabel(r'Gdiff($\psi$)')
+##    plt.title('V-line G diff  \n tl = {}$ms$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e3,dr,box_size))
+#    plt.title('V-line G diff')
+#    plt.tick_params(which='minor', length=2, width=1.5)
+#    plt.tick_params(which='major', length=4, width=2)
+#    plt.show()
+#    plt.tight_layout() #hace que no me corte los márgenes
+#    
+#    if guardar_imagenes:
+#        plt.savefig('C:\\Users\\LEC\\Desktop\\Poster TOPFOT 2019\\V_Line_Diff')
+#    
+#    
+#    ###  Grafico solo termino Scanning
+#    plt.figure(5)
+##    plt.plot((dr*x), S_norm,'-.',label=f'D={d}')
+#    plt.semilogx((dr*x), S_norm,'-.',label=f'D={d}')
+#    plt.legend()
+#    plt.xlabel(r'pixel shift $\psi$ - $\mu m$')
+#    plt.ylabel(r'Scanning($\psi$)')
+##    plt.title('V-line  SCANNING  \n tl = {}$ms$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e3,dr,box_size))
+#    plt.title('V-line  SCANNING')
+#    plt.tick_params(which='minor', length=2, width=1.5)
+#    plt.tick_params(which='major', length=4, width=2)
+#    plt.show()
+#    plt.tight_layout() #hace que no me corte los márgenes
+#    
+#    if guardar_imagenes:
+#        plt.savefig('C:\\Users\\LEC\\Desktop\\Poster TOPFOT 2019\\V_Line_Scanning')
+#    
     
     ###  Grafico funcion de correlación  total
     plt.figure(6)
 #    plt.plot((dr*x), Gtotal_normalizada,'-.',label=f'D={d}')
     plt.semilogx((dr*x), Gtotal_normalizada,'-.',label=f'D={d}')
     plt.legend()
-    plt.xlabel(r'pixel shift $\psi$ - $\mu m$',fontsize=14)
-    plt.ylabel(r'Gtot($\psi$)',fontsize=14)
-#    plt.title('V-line G total \n tl = {}$ms$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e3,dr,box_size),fontsize=18)
+    plt.xlabel(r'pixel shift $\psi$ - $\mu m$')
+    plt.ylabel(r'Gtot($\psi$)')
+#    plt.title('V-line G total \n tl = {}$ms$  - pix size = {} $\mu$- box size = {} pix'.format(tp*1e3,dr,box_size))
     plt.title('V-line G total')
+    plt.tick_params(which='minor', length=2, width=1.5)
+    plt.tick_params(which='major', length=4, width=2)
     plt.show()
     plt.tight_layout() #hace que no me corte los márgenes
     
