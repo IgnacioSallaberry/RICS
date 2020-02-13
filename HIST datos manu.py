@@ -25,7 +25,8 @@ import matplotlib.ticker as mticker
 # CARGO LOS DATOS DE LAS 100 SIMULACIONES DE DIFUSIÓN DEL 5-4-19 Y CALCULO EL S2 USANDO ESTADÍSTICO A MANO
 #==============================================================================
 #23hs_cell4_rics_cyto_DIFFERENCE_DIFUSION
-with open('D:\\Nacho Sallaberry - Next Cloud\\Datos manu\\ANALISIS DATOS MANU 6HS DENV CELULA1 RICS NUCLEO\\DIFFERENCE DIFUSION 6HS DENV CELULA1 RICS NUCLEO.txt') as fobj:
+#with open('D:\\Nacho Sallaberry - Next Cloud\\Datos manu\\ANALISIS DATOS MANU 6HS DENV CELULA1 RICS NUCLEO\\DIFFERENCE DIFUSION 6HS DENV CELULA1 RICS NUCLEO.txt') as fobj:
+with open('D:\\Nacho Sallaberry - Next Cloud\\TESIS\\DATOS MANU ANALIZADOS PARA LA TESIS\\w0=0_25 - ANALISIS DATOS MANU 6HS DENV CELULA1 RICS NUCLEO\\DIFFERENCE DIFUSION 6HS DENV CELULA1 RICS NUCLEO CON W0_0_25.txt') as fobj:
     datos_difusion = fobj.read()
 datos_difusion = re.split('\t|\n', datos_difusion)
 datos_difusion.remove('X')
@@ -35,8 +36,9 @@ datos_difusion.remove('')
 datos_difusion.remove('')
     
 
+#with open('D:\\Nacho Sallaberry - Next Cloud\\Datos manu\\ANALISIS DATOS MANU 6HS DENV CELULA1 RICS NUCLEO\\DIFFERENCE BINDING 6HS DENV CELULA1 RICS NUCLEO.txt') as fobj:
+with open('D:\\Nacho Sallaberry - Next Cloud\\TESIS\\DATOS MANU ANALIZADOS PARA LA TESIS\\w0=0_25 - ANALISIS DATOS MANU 6HS DENV CELULA1 RICS NUCLEO\\DIFFERENCE BINDING 6HS DENV CELULA1 RICS NUCLEO CON W0_0_25.txt') as fobj:
 
-with open('D:\\Nacho Sallaberry - Next Cloud\\Datos manu\\ANALISIS DATOS MANU 6HS DENV CELULA1 RICS NUCLEO\\DIFFERENCE BINDING 6HS DENV CELULA1 RICS NUCLEO.txt') as fobj:
     datos_binding= fobj.read()
 datos_binding= re.split('\t|\n', datos_binding)
 datos_binding.remove('X')
@@ -55,7 +57,23 @@ while i< len(datos_difusion ):
     
     i+=3
 
+S2_DIF=0
+i=0
+while i<len(DIFERENCE_DIF):
+    S2_DIF=S2_DIF+DIFERENCE_DIF[i]**2
+    i+=1
+S2_DIF = S2_DIF/len(DIFERENCE_DIF)    
+print(f'S2_DIF = {S2_DIF}')    
+    
+S2_BIND=0
+i=0
+while i<len(DIFERENCE_BIND):
+    S2_BIND=S2_BIND+DIFERENCE_BIND[i]**2
+    i+=1
+S2_BIND = S2_BIND/len(DIFERENCE_BIND)    
+print(f'S2_BIND = {S2_BIND}')
 
+    
 plt.close('all')
 #==============================================================================
 # 
@@ -80,9 +98,8 @@ std_err_ajuste_Bind = sigma_ajuste_Bind / N_ajuste_Bind # error estándar
 
 
 #==============================================================================
-# PARAMETROS DE TAMAÑAO DE LETRA DE LOS GRAFICOS
-#==============================================================================
-plt.close('all') # amtes de graficar, cierro todos las figuras que estén abiertas
+#                                Tipografía de los gráficos
+#==============================================================================    
 SMALL_SIZE = 28
 MEDIUM_SIZE = 36
 BIGGER_SIZE = 39
@@ -93,7 +110,7 @@ plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=22)    # legend fontsize
 plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
-
+#==============================================================================
 
 def Gaussiana(mu,sigma):
      
@@ -116,15 +133,15 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_Diff,sigma_ajuste_Diff)[0],
          Gaussiana(mu_ajuste_Diff,sigma_ajuste_Diff)[1],
-         '--', color='tomato', label='Ajuste: Difusión \n $\mu$= {:10.3E} $\\sigma$ = {:10.3E}'.format(mu_ajuste_Diff, sigma_ajuste_Diff)
-
+         '--', color='tomato', label='Ajuste: Difusión \n $\mu$= {:10.3E} $ \\ \\sigma$ = {:10.3E}'.format(mu_ajuste_Diff, sigma_ajuste_Diff), linewidth=2
+         
          )
 #plt.errorbar(0.5*(bin_positions_ajuste[1:]+bin_positions_ajuste[:-1]), n, yerr=np.sqrt(n),
 #             fmt='None', ecolor='r', elinewidth=3, capthick=10)
 #plt.bar(bin_positions_ajuste,n, yerror=np.sqrt(n))#, alpha=0.5, ecolor='black', capsize=10)
 plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-plt.tick_params(which='minor', length=4, width=1.5)
-plt.tick_params(which='major', length=7, width=2)
+plt.tick_params(which='minor', length=2, width=1.5)
+plt.tick_params(which='major', length=4, width=2)
 
 ##==============================================================================    
 ##                               Diferencias ajuse por Binding
@@ -134,16 +151,16 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_Bind,sigma_ajuste_Bind)[0],
          Gaussiana(mu_ajuste_Bind,sigma_ajuste_Bind)[1],
-         '--',color='forestgreen', label= 'Ajuste: Asociacion-Disociación \n $\mu$= {:10.3E} $\\sigma$ = {:10.3E}'.format(mu_ajuste_Bind, sigma_ajuste_Bind)
+         '--',color='forestgreen', label= 'Ajuste: Asociacion-Disociación \n $\mu$= {:10.3E} $\\ \\sigma$ = {:10.3E}'.format(mu_ajuste_Bind, sigma_ajuste_Bind),linewidth=2
          )
 plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 #plt.errorbar(0.5*(bin_positions_ajuste[1:]+bin_positions_ajuste[:-1]), n,  yerr=np.sqrt(n), fmt='None', ecolor='b', elinewidth=3)
 plt.xlabel(r'$Datos - Ajuste$')
 plt.ylabel('')
 plt.legend()
-plt.title('Histograma normalizado')
-plt.tick_params(which='minor', length=4, width=1.5)
-plt.tick_params(which='major', length=7, width=2)
+#plt.title('Histograma normalizado')
+plt.tick_params(which='minor', length=2, width=1.5)
+plt.tick_params(which='major', length=4, width=2)
 plt.show()
 plt.tight_layout()
 #plt.savefig('C:\\Users\\ETCasa\\Desktop\\Histogramas datos manu')
