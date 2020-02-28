@@ -12,27 +12,27 @@ from scipy.stats import norm
 import matplotlib.mlab as mlab
 
 #==============================================================================
-#                       Cargo LISTAS CON VALORES DE S2 
+#                       Cargo LISTAS CON VALORES DE S2
 #==============================================================================    
-with open('C:\\Users\\LEC\\Desktop\\S2\\S2 calculado de ajustar con python __ Ajuste de proceso de binding puro por modelo de DIFUSION.txt') as fobj:
+with open('C:\\Users\\ETcasa\\Desktop\\S2\\S2 calculado de ajustar con python __ Ajuste de proceso de binding puro por modelo de DIFUSION.txt') as fobj:
     Proceso_BindingPURO_ajustado_por_dif = fobj.read()
 S2_binding_puro_ajustado_por_dif = re.split('\n', Proceso_BindingPURO_ajustado_por_dif)
 S2_binding_puro_ajustado_por_dif.remove('')
 S2_binding_puro_ajustado_por_dif = [float(i) for i in S2_binding_puro_ajustado_por_dif]
 
-with open('C:\\Users\\LEC\\Desktop\\S2\\S2 calculado de ajustar con python __ Ajuste de proceso de binding puro por modelo de Binding PURO.txt') as fobj:
+with open('C:\\Users\\ETcasa\\Desktop\\S2\\S2 calculado de ajustar con python __ Ajuste de proceso de binding puro por modelo de Binding PURO.txt') as fobj:
     Proceso_BindingPURO_ajustado_por_BindingPURO = fobj.read()
 S2_binding_puro_ajustado_por_bind = re.split('\n', Proceso_BindingPURO_ajustado_por_BindingPURO)
 S2_binding_puro_ajustado_por_bind.remove('')
 S2_binding_puro_ajustado_por_bind = [float(i) for i in S2_binding_puro_ajustado_por_bind]
 
-with open('C:\\Users\\LEC\\Desktop\\S2\\S2 calculado de ajustar con python __ Ajuste de proceso de difusion pura por modelo de DIFUSION.txt') as fobj:
+with open('C:\\Users\\ETcasa\\Desktop\\S2\\S2 calculado de ajustar con python __ Ajuste de proceso de difusion pura por modelo de DIFUSION.txt') as fobj:
     Proceso_dif_ajustado_por_dif = fobj.read()
 S2_dif_ajustado_por_dif = re.split('\n', Proceso_dif_ajustado_por_dif)
 S2_dif_ajustado_por_dif.remove('')
 S2_dif_ajustado_por_dif = [float(i) for i in S2_dif_ajustado_por_dif]
 
-with open('C:\\Users\\LEC\\Desktop\\S2\\S2 calculado de ajustar con python __ Ajuste de proceso de difusion pura por modelo de Binding PURO.txt') as fobj:
+with open('C:\\Users\\ETcasa\\Desktop\\S2\\S2 calculado de ajustar con python __ Ajuste de proceso de difusion pura por modelo de Binding PURO.txt') as fobj:
     Proceso_dif_ajustado_por_bind = fobj.read()
 S2_dif_ajustado_por_bind = re.split('\n', Proceso_dif_ajustado_por_bind)
 S2_dif_ajustado_por_bind.remove('')
@@ -62,9 +62,9 @@ S2_dif_ajustado_por_bind = [float(i) for i in S2_dif_ajustado_por_bind]
 #==============================================================================
 plt.close('all') # amtes de graficar, cierro todos las figuras que estén abiertas
 
-SMALL_SIZE = 14
-MEDIUM_SIZE = 18
-BIGGER_SIZE = 20
+SMALL_SIZE = 25
+MEDIUM_SIZE = 31
+BIGGER_SIZE = 34
 
 plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=MEDIUM_SIZE)     # fontsize of the axes title
@@ -72,8 +72,8 @@ plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
 plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title 
-plt.rc('lines', linewidth=3)
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+plt.rc('lines', linewidth=4)
 
 
 #==============================================================================
@@ -135,7 +135,7 @@ std_err_ajuste_Diff_por_Dif = sigma_ajuste_Diff_por_Dif / N_ajuste_Diff_por_Dif 
 
 #==============================================================================    
 #                               Proceso Difusion y binding
-#                               Ajuste: Difusion 
+#                               Ajuste: Difusion
 #==============================================================================    
 #mu_ajuste_Dif_y_Bind_por_Dif=np.mean(S2_dif_y_bind_ajustado_por_dif) # media
 #sigma_ajuste_Dif_y_Bind_por_Dif=np.std(S2_dif_y_bind_ajustado_por_dif) #desviación estándar     std = sqrt(mean(abs(x - x.mean())**2))
@@ -159,7 +159,7 @@ std_err_ajuste_Diff_por_Dif = sigma_ajuste_Diff_por_Dif / N_ajuste_Diff_por_Dif 
 
 #==============================================================================
 #                           #####     Funcion Gaussiana  #####
-#==============================================================================   
+#==============================================================================  
 def Gaussiana(mu,sigma):
      
     x_inicial = mu-3.5*sigma
@@ -190,7 +190,11 @@ plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPUR
          '--', color='tomato',
          label='Proceso: Asociacion-Disociación \n Ajuste: Asociacion-Disociación \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
          )
-
+ax1.tick_params(which='minor', length=8, width=3.5)
+ax1.tick_params(which='major', length=6, width=3)
+#figManager = plt.get_current_fig_manager()  ####   esto y la linea de abajo me maximiza la ventana de la figura
+#figManager.window.showMaximized()           ####   esto y la linea de arriba me maximiza la ventana de la figura
+plt.show()
 plt.legend()
 #==============================================================================    
 #                               Proceso Binding
@@ -206,8 +210,10 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[0],
          Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[1],
-         '--',color='#8f1402', label='Proceso: Asociacion-Disociación \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_BindingPURO_por_BindingPURO, sigma_ajuste_BindingPURO_por_BindingPURO)
+         '--',color='#8f1402', label='Proceso: Asociacion-Disociación \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_BindingPURO_por_Dif, sigma_ajuste_BindingPURO_por_Dif)
          )
+ax1.tick_params(which='minor', length=8, width=3.5)
+ax1.tick_params(which='major', length=6, width=3)
 
 plt.legend()
 #==============================================================================    
@@ -226,7 +232,8 @@ plt.plot(Gaussiana(mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)[0],
          Gaussiana(mu_ajuste_Dif_por_Bind,sigma_ajuste_Diff_por_Bind)[1],
          'b--', label='Proceso: Dif \n Ajuste: Asociacion-Disociación \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Bind, sigma_ajuste_Diff_por_Bind)
          )
-
+ax1.tick_params(which='minor', length=8, width=3.5)
+ax1.tick_params(which='major', length=6, width=3)
 plt.legend()
 #==============================================================================    
 #                               Proceso Difusion
@@ -243,7 +250,8 @@ plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
          Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[1],
          '--',color='forestgreen', label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
          )
-
+ax1.tick_params(which='minor', length=8, width=3.5)
+ax1.tick_params(which='major', length=6, width=3)
 plt.legend()
 plt.gcf().subplots_adjust(bottom=0.15)
 plt.tight_layout()
@@ -293,7 +301,7 @@ plt.show()
 ##plt.plot(x_gaussiana,gaussiana,'r--', linewidth=2, label='Diff y Bind\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)) #grafico la gaussiana
 #plt.plot(x_gaussiana,gaussiana3,'b--', linewidth=3, label='Proceso: D y B \n Ajuste: D y B\n $\mu$= {:.2f} - $\sigma$ = {:.2f}'.format(mu_ajuste_Dif_y_Bind_por_Dif_y_Bind, sigma_ajuste_Dif_y_Bind_por_Dif_y_Bind)) #grafico la gaussiana
 #plt.xlabel('$S^2$')
-#plt.ylabel('Frecuencia')
+#plt.ylabel('PDF')
 
 #plt.legend()
 #plt.show()
@@ -307,11 +315,11 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[0],
          Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[1],
-         '--',color='#8f1402', label='Proceso: Asociacion-Disociación \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         '--',color='#8f1402', label='Proceso: Asociacion-Disociación \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_BindingPURO_por_Dif, sigma_ajuste_BindingPURO_por_Dif)
          )
 
 plt.xlabel(r'$S^2$')
-plt.ylabel('Frecuencia')
+plt.ylabel('PDF')
 plt.legend()
 
 
@@ -329,8 +337,11 @@ plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPUR
          )
 
 plt.xlabel(r'$S^2$')
-plt.ylabel('Frecuencia')
+plt.ylabel('PDF')
 plt.legend()
+
+plt.tick_params(which='minor', length=8, width=3.5)
+plt.tick_params(which='major', length=6, width=3)
 plt.show()
 
 
@@ -350,7 +361,7 @@ plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
          '--',color='forestgreen', label='Proceso: Dif \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
          )
 plt.xlabel(r'$S^2$')
-plt.ylabel('Frecuencia')
+plt.ylabel('PDF')
 plt.legend()
 
 
@@ -368,8 +379,11 @@ plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_BindingPURO,sigma_ajuste_BindingPUR
          )
 
 plt.xlabel(r'$S^2$')
-plt.ylabel('Frecuencia')
+plt.ylabel('PDF')
 plt.legend()
+
+plt.tick_params(which='minor', length=8, width=3.5)
+plt.tick_params(which='major', length=6, width=3)
 plt.show()
 
 
@@ -404,9 +418,12 @@ plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
          )
 
 plt.xlabel(r'$S^2$')
-plt.ylabel('Frecuencia')
+plt.ylabel('PDF')
 plt.legend()
 plt.gcf().subplots_adjust(bottom=0.15)
+
+plt.tick_params(which='minor', length=8, width=3.5)
+plt.tick_params(which='major', length=6, width=3)
 plt.show()
 
 
@@ -423,11 +440,11 @@ bin_size_ajuste=bin_positions_ajuste[1]-bin_positions_ajuste[0] # calculo el anc
 
 plt.plot(Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[0],
          Gaussiana(mu_ajuste_BindingPURO_por_Dif,sigma_ajuste_BindingPURO_por_Dif)[1],
-         '--',color='#8f1402', label='Proceso: Asociacion-Disociación \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_Dif_por_Dif, sigma_ajuste_Diff_por_Dif)
+         '--',color='#8f1402', label='Proceso: Asociacion-Disociación \n Ajuste: Dif \n $\mu$= {:.3f} - $\sigma$ = {:.3f}'.format(mu_ajuste_BindingPURO_por_Dif, sigma_ajuste_BindingPURO_por_Dif)
          )
 
 plt.xlabel(r'$S^2$')
-plt.ylabel('Frecuencia')
+plt.ylabel('PDF')
 plt.legend()
 
 #==============================================================================    
@@ -443,11 +460,14 @@ plt.plot(Gaussiana(mu_ajuste_Dif_por_Dif,sigma_ajuste_Diff_por_Dif)[0],
          )
 
 plt.xlabel(r'$S^2$')
-plt.ylabel('Frecuencia')
+plt.ylabel('PDF')
 plt.legend()
 plt.gcf().subplots_adjust(bottom=0.15)
+
+plt.tick_params(which='minor', length=8, width=3.5)
+plt.tick_params(which='major', length=6, width=3)
 plt.show()
 
 
-
-
+#print('area_del_histo={}'.format(sum(np.diff(bin_positions_ajuste)*n)))
+#print('area_de primer columna={}'.format((bin_positions_ajuste[1]-bin_positions_ajuste[0])*n[0]))
