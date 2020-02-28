@@ -6,7 +6,7 @@ Created on Tue Apr  9 20:25:06 2019
 
 import numpy as np
 import matplotlib.pyplot as plt
-
+import matplotlib as mpl
 
 #==============================================================================
 #                                  Parametros globales iniciales
@@ -75,7 +75,7 @@ t_diff = w0**2/(4*D)
 print('tiempo de difusion = {} segundos'.format(t_diff))
 
 
-t_binding=0.5
+t_binding=0.0005
 #==============================================================================
 #                                Inicializo T= t_diff / t_bind 
 #==============================================================================    
@@ -246,8 +246,10 @@ for t in T:
     plt.xlabel(r'$\tau$ - ($s$)')
     plt.ylabel(r'G($\tau$)')
 #    plt.tick_params(direction='out', length=6, width=2, colors='r', grid_color='r', grid_alpha=0.5)
-    plt.tick_params(which='minor', length=2, width=1.5)
-    plt.tick_params(which='major', length=4, width=2)
+    plt.tick_params(which='minor', length=7.5, width=3.5)
+    plt.tick_params(which='major', length=10, width=5)
+    figManager = plt.get_current_fig_manager()  ####   esto y la linea de abajo me maximiza la ventana de la figura
+    figManager.window.showMaximized()           ####   esto y la linea de arriba me maximiza la ventana de la figura
     plt.show()
 #    plt.tight_layout() #hace que no me corte los márgenes
     
@@ -268,8 +270,10 @@ for t in T:
     plt.legend(loc='lower left')
     plt.xlabel(r'$\tau$ - ($s$)')
     plt.ylabel(r'G($\tau$)')
-    plt.tick_params(which='minor', length=2, width=1.5)
-    plt.tick_params(which='major', length=4, width=2)
+    plt.tick_params(which='minor', length=7.5, width=3)
+    plt.tick_params(which='major', length=10, width=4.5)
+    figManager = plt.get_current_fig_manager()  ####   esto y la linea de abajo me maximiza la ventana de la figura
+    figManager.window.showMaximized()           ####   esto y la linea de arriba me maximiza la ventana de la figura
     plt.show()
 #    plt.tight_layout() #hace que no me corte los márgenes
     
@@ -387,14 +391,21 @@ for t in T:
 
 
 
-#plt.semilogx(tau, G_diff_moño - 1,'k')    #Grafico la correlacion de DIFUSION 
-###busco el valor de tau para el t_diff
-#j=0
-#while tau[j]<t_diff:
-#    j+=1
-#plt.semilogx(tau[j],G_diff_moño[j]-1, 'ko')   #marco el t_diff
-#plt.axvline(x=t_diff)  #linea que marca el valor del t_diff
-#plt.show()
+plt.semilogx(tau, G_diff/max(G_diff),linewidth=3)    #Grafico la correlacion de DIFUSION 
+
+##busco el valor de tau para el t_diff
+j=0
+while tau[j]<t_diff:
+    j+=1
+plt.semilogx(tau[j],G_diff[j]/max(G_diff), 'ko')   #marco el t_diff
+plt.axvline(x=t_diff)  #linea que marca el valor del t_diff
+plt.tick_params(which='minor', length=7.5, width=3)
+plt.tick_params(which='major', length=10, width=4.5)
+figManager = plt.get_current_fig_manager()  ####   esto y la linea de abajo me maximiza la ventana de la figura
+figManager.window.showMaximized()           ####   esto y la linea de arriba me maximiza la ventana de la figura
+plt.show()
+
+
 
 
 
