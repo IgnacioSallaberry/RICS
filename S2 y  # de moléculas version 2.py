@@ -72,12 +72,21 @@ for i in concentracion_en_PSF_asoc_disoc:
 S2_asoc_disoc = [0.0000893636,0.0000775362,0.0002823328,0.0004867565,0.0015149203,0.0021687680,0.0052024122,0.0142299307,0.0413098291,0.1375668058]  
 S2_difusion = [0.0000060492,0.0000102254,0.0000286686,0.0000502642,0.0001507467,0.0001554366,0.0003864523,0.0011281431,0.0022476617,0.0068247176,0.0320095827,0.1020694733]
 
+S2_manu_difusion = 4.314e-7
+concentracion_manu_difusion = 0.87e-6
+
+S2_manu_asoc_disoc = 4.337e-7
+concentracion_manu_asoc_disoc = 1.76e-6
+
+
 plt.figure()
 #fig.suptitle('S2 vs # de molec en PSF')
 #fig, axs = plt.subplots(2)
 #plt.semilogx(concentracion_molar_en_PSF,S2_difusion, 'b-*', label='S2 difusion')
 plt.loglog(concentracion_molar_en_PSF_dif,S2_difusion, 'b--s', label='S2 difusion',linewidth=3,markersize=10)
 plt.loglog(concentracion_molar_en_PSF_asoc_disoc,S2_asoc_disoc, 'r--s', label='S2 asoc-disoc',linewidth=3,markersize=10)
+plt.loglog(concentracion_manu_difusion,S2_manu_difusion,'*g',markersize=10, label='S2 manu difu')
+plt.loglog(concentracion_manu_asoc_disoc,S2_manu_asoc_disoc,'*',color='orange',markersize=10,label='S2 manu asoc-disoc')
 
 plt.xlabel('Concentracion en PSF nM')
 plt.ylabel('S2')
@@ -88,5 +97,3 @@ figManager.window.showMaximized()           ####   esto y la linea de arriba me 
     
 plt.legend()
 plt.show()
-
-
