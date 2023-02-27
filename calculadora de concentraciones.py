@@ -33,7 +33,7 @@ partic_en_caja = 100
 
 partic_en_PSF = vol_PSF_2Dimensiones * partic_en_caja / vol_caja    #en femtolitros
 
-concentracion_en_PSF = partic_en_PSF/vol_PSF_2Dimensiones # cantidad de moleculas en PSF/ um^2
+concentracion_en_PSF = partic_en_PSF/vol_PSF_2Dimensiones # cantidad de moleculas en PSF = #de molec por um^2
 #concentración en PSF está OK
 
 un_mol=6.023e23  ## moleculas en un mol
