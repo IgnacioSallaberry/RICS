@@ -22,6 +22,8 @@ w0 = 0.1              # radio de la PSF  = micrometros
                        # Por lo tanto acá utilizar w0 = (w0_simfcs)/2 . De esta forma 
 wz = 0.8              #alto de la PSF desde el centro  = micrometros
 
+partic_en_caja = 100
+
 #%%
 #==============================================================================
 #                                  Para simulaciones en 2-Dimensiones
@@ -31,8 +33,6 @@ vol_caja = (dr*box_size)**2 # OK
 vol_PSF = (w0**2)*wz*1.04719 # OK esto es el valor reportado por el simFCS. No se de donde sale el factor 1.04719
 
 vol_PSF_2Dimensiones = (w0**2)  # OK esto es en 2D
-
-partic_en_caja = 100
 
 partic_en_PSF = vol_PSF_2Dimensiones * partic_en_caja / vol_caja    #en femtolitros
 
@@ -51,7 +51,7 @@ vol_caja = (dr*box_size)**3
 
 vol_PSF = ((w0*0.5)**2)*wz*((np.pi)**(1.5))
 
-partic_en_caja = 4000
+
 
 partic_en_PSF = vol_PSF * partic_en_caja / vol_caja    #en femtolitros
 
