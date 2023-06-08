@@ -11,15 +11,16 @@ import matplotlib.pyplot as plt
 #==============================================================================
 #                                  Parametros globales iniciales
 #==============================================================================   
-box_size = 256
+box_size = 128        # OBS: El valor que se introduce en el simFCS es el semiancho de la caja.
+                      # Acá "box_size"= ancho total de la caja. Por lo tanto, usar el doble del valor introducido en el simFCS
 roi = 128
 tp = 1e-6             #seg    
 tl = box_size * tp    #seg
 dr = 0.05             # delta r = pixel size =  micrometros
-w0 = 0.75              # radio de la PSF  = micrometros    
-                       # OBS!! : El simFCS indica "w0 = Radial Waist".
-                       # Esto significa que es el diámetro de la PSF. Por lo tanto acá utilizar w0 = (w0_simfcs)/2
-wz = 1.5              #alto de la PSF desde el centro  = micrometros
+w0 = 0.1              # radio de la PSF  = micrometros    
+                       # OBS!! : El simFCS indica "w0 = Radial Waist". # Esto significa que es el diámetro de la PSF.
+                       # Por lo tanto acá utilizar w0 = (w0_simfcs)/2 . De esta forma 
+wz = 0.8              #alto de la PSF desde el centro  = micrometros
 
 #%%
 #==============================================================================
