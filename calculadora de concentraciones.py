@@ -16,7 +16,9 @@ roi = 128
 tp = 1e-6             #seg    
 tl = box_size * tp    #seg
 dr = 0.05             # delta r = pixel size =  micrometros
-w0 = 0.75              #radio de la PSF  = micrometros    
+w0 = 0.75              # radio de la PSF  = micrometros    
+                       # OBS!! : El simFCS indica "w0 = Radial Waist".
+                       # Esto significa que es el diámetro de la PSF. Por lo tanto acá utilizar w0 = (w0_simfcs)/2
 wz = 1.5              #alto de la PSF desde el centro  = micrometros
 
 #%%
