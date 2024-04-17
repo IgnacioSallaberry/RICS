@@ -41,7 +41,7 @@ concentracion_en_PSF = partic_en_PSF/vol_PSF_2Dimensiones # cantidad de molecula
 
 un_mol=6.023e23  ## moleculas en un mol
 
-concentracion_molar_en_PSF = concentracion_en_PSF/un_mol
+concentracion_molar_en_PSF = concentracion_en_PSF/un_mol * 1e15
 
 #%%
 #==============================================================================
